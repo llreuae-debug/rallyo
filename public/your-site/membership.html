@@ -2151,6 +2151,84 @@
   </main>
 
   <!-- =============================================================
+       GLOBAL 4-COLUMN FOOTER
+  ============================================================== -->
+  <footer style="position: relative; z-index: 10; border-top: 1px solid var(--border-subtle); padding: 4.5rem 2.5rem 3rem; background: rgba(7, 9, 14, 0.95); margin-top: auto;">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 3rem; margin-bottom: 3.5rem;">
+      <div style="max-width: 320px;">
+        <a href="index.html" class="brand-group" style="margin-bottom: 0.85rem; display: inline-flex;">
+          <div class="brand-ball-icon">🎾</div>
+          <span class="brand-name" style="font-size: 1.5rem;">RALLYO</span>
+        </a>
+        <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-lime); font-weight: 700; margin-top: 0.5rem;">
+          MADRID &bull; DUBAI &bull; STOCKHOLM &bull; LONDON &bull; MIAMI &bull; DOHA
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 3.5rem; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-lime); font-weight: 800;">EXPERIENCE</span>
+          <a href="index.html#hero-track" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">The Narrative</a>
+          <a href="index.html#explainer" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Sticky Explainer</a>
+          <a href="index.html#rail-wrapper" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Runway Rail</a>
+          <a href="index.html#parallax-statement" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">The Manifesto</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-lime); font-weight: 800;">ECOSYSTEM</span>
+          <a href="index.html#reverse-columns" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Court Sanctuaries</a>
+          <a href="index.html#reverse-columns" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Doubles Matchmaking</a>
+          <a href="javascript:void(0)" onclick="startFlow('club_owner')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Club Accreditation</a>
+          <a href="javascript:void(0)" onclick="startFlow('player')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Player Passports</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-lime); font-weight: 800;">MEMBERSHIP</span>
+          <a href="javascript:void(0)" onclick="startFlow('player')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Player Syndicate</a>
+          <a href="javascript:void(0)" onclick="startFlow('club_owner')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Club Operator Portal</a>
+          <a href="javascript:void(0)" onclick="startFlow('player'); setTimeout(() => switchPlayerTab('challenges', document.querySelector('.dash-tab:nth-child(7)')), 1500);" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Private Tourneys</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('concierge')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">VIP Concierge</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <span style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-lime); font-weight: 800;">LEGAL & ARCHIVE</span>
+          <a href="javascript:void(0)" onclick="openEditorialModal('privacy')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Privacy Charter</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('terms')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Terms of Sanction</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('ethics')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Court Ethics</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('archive')" class="footer-link" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">2026 Archive</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 2rem; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; gap: 1rem;">
+      <p>&copy; 2026 RALLYO PADEL TECHNOLOGIES INC. ALL RIGHTS RESERVED.</p>
+      <p style="color: var(--accent-lime); letter-spacing: 1px;">FIND YOUR RALLY &bull; HAUTE DIGITAL ATELIER</p>
+    </div>
+  </footer>
+
+  <!-- =============================================================
+       EDITORIAL & LEGAL ARCHIVE MODAL DRAWER
+  ============================================================== -->
+  <div id="editorial-modal" class="guard-modal-overlay" onclick="closeEditorialModal()">
+    <div class="guard-box" style="max-width: 640px; text-align: left;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+        <div>
+          <span class="role-badge lime" id="editorial-badge" style="margin-bottom: 0.5rem;">RALLYO CHARTER</span>
+          <h3 class="guard-title" id="editorial-title" style="margin-bottom: 0.3rem;">Document Title</h3>
+          <p id="editorial-subtitle" style="font-size: 0.85rem; color: var(--text-muted);">Official guidelines and operating protocols.</p>
+        </div>
+        <button class="nav-link-btn" onclick="closeEditorialModal()" style="padding: 0.35rem 0.75rem;">&times;</button>
+      </div>
+      <div id="editorial-body" style="max-height: 55vh; overflow-y: auto; font-size: 0.9rem; line-height: 1.7; color: #cbd5e1; padding-right: 0.5rem; margin-bottom: 1.5rem;">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="cta-btn-card btn-player-cta" style="width: auto; padding: 0.75rem 1.5rem;" onclick="closeEditorialModal()">Acknowledge & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
        ROLE-BASED RESTRICTION MODAL OVERLAY
   ============================================================== -->
   <div id="guard-modal" class="guard-modal-overlay">
@@ -2183,8 +2261,9 @@
     const viewPlayerDash = document.getElementById('view-player-dashboard');
     const viewClubDash = document.getElementById('view-club-dashboard');
     const guardModal = document.getElementById('guard-modal');
+    const editorialModal = document.getElementById('editorial-modal');
 
-    // Initialize from LocalStorage
+    // Initialize from LocalStorage and URL Parameters
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('rallyo_current_user');
       if (savedUser) {
@@ -2194,6 +2273,28 @@
         } catch (e) {
           console.error(e);
         }
+      }
+
+      // Parse URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      const emailParam = params.get('email');
+      const modalParam = params.get('modal');
+      const tabParam = params.get('tab');
+
+      if (emailParam) {
+        const playerEmail = document.getElementById('player-email');
+        if (playerEmail) playerEmail.value = emailParam;
+      }
+
+      if (roleParam === 'player') {
+        startFlow('player', 'signup');
+      } else if (roleParam === 'club_owner' || roleParam === 'club') {
+        startFlow('club_owner', 'signup');
+      }
+
+      if (modalParam) {
+        openEditorialModal(modalParam);
       }
     });
 
@@ -2627,6 +2728,91 @@
           showBanner(activeFlow, 'error', 'Network connection interrupted. Retrying sync with RALLYO servers...');
           break;
       }
+    }
+
+    const EDITORIAL_DOCUMENTS = {
+      privacy: {
+        badge: "RALLYO DATA CHARTER",
+        title: "Global Privacy & Biometric Pass Protocol",
+        subtitle: "Enterprise-grade encryption and biometric data protection across all club access gates.",
+        content: `
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">1. Zero-Knowledge Biometric Turnstiles</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">RALLYO issues dynamic QR cryptographic passes. Biometric data captured at club turnstiles (face recognition or optical QR) is verified locally on edge devices and never stored in clear text on public networks.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">2. End-to-End Match Communication</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Player lobby communications, private match negotiations, and syndicate invitations are encrypted end-to-end. We do not sell player telemetry or behavior profiles to third-party advertisers.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">3. International Compliance</h4>
+          <p style="color: #cbd5e1;">Our infrastructure complies with EU GDPR, UAE DIFC Data Protection Law No. 5 of 2020, and US California Privacy Rights Act (CPRA). You retain total ownership to export or delete your player identity at any time.</p>
+        `
+      },
+      terms: {
+        badge: "SANCTIONED COMPETITION REGULATIONS",
+        title: "Terms of Sanction & ELO Governance",
+        subtitle: "Fair play standards, ELO calibration rules, and court reservation escrow protocols.",
+        content: `
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">1. Dynamic ELO Calibration</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">All rated doubles matches submitted to the RALLYO network require mutual score confirmation from both teams within 60 minutes of match completion. Disputed scores undergo automated review by the regional sanctioning board.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">2. Strict Anti-Smurfing & Identity Integrity</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Every athlete must maintain a single verified passport. Accounts engaging in artificial ranking manipulation or smurfing face immediate ELO forfeiture and invitational suspension.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">3. Reservation Escrow & Cancellation</h4>
+          <p style="color: #cbd5e1;">Court bookings through RALLYO are held in high-speed payment escrow. Free cancellation is guaranteed up to 12 hours before slot start time. Late cancellations release 50% court yield to the venue operator.</p>
+        `
+      },
+      ethics: {
+        badge: "PADEL CODE OF CONDUCT",
+        title: "Court Ethics & Glass Wall Protocol",
+        subtitle: "The unwritten laws of sportsmanship, glass safety, and court acoustics.",
+        content: `
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">1. Architectural Glass Integrity</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Respect the 12mm panoramic tempered glass enclosures. Aggressive racket contact with glass panels is strictly prohibited. Mandatory wrist tether straps must remain fastened at all times on court.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">2. High-Integrity Line Calling</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">In un-refereed sanctioned matches, teams call balls on their own side of the court. When doubt arises on spin balls grazing the mesh or glass corner, standard FIP rules dictate playing a 'let' point.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">3. Community & Skycourt Etiquette</h4>
+          <p style="color: #cbd5e1;">Padel is built on camaraderie and electric momentum. Treat opponents, partners, ball boys, and club concierges with utmost respect before, during, and after every rally.</p>
+        `
+      },
+      archive: {
+        badge: "MONOLITHIC LOOKBOOK // 2026",
+        title: "The 2026 Season Architecture Archive",
+        subtitle: "Documenting our global commissions, private skycourts, and the digital atelier.",
+        content: `
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">1. Dubai Marina Glass Sanctuary</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Six monolithic panoramic glass courts overlooking the Arabian Gulf. Designed in collaboration with European padel architects featuring custom low-glare 1000-lux LED luminaires.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">2. Salamanca Private Atelier, Madrid</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Historic indoor courtyard conversion featuring acoustic resonance damping, matte-black carbon fiber nets, and subterranean recovery suites.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">3. Stockholm Skycourt & Miami Pavilion</h4>
+          <p style="color: #cbd5e1;">Rooftop installations engineered for extreme temperature resilience, ultra-pure bounce consistency, and automated drone match capture.</p>
+        `
+      },
+      concierge: {
+        badge: "VIP PADEL CONCIERGE",
+        title: "Private Syndicate & Bespoke Tourney Desk",
+        subtitle: "Private court lockouts, custom corporate championships, and bespoke racket calibration.",
+        content: `
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">1. Private Court Buyouts</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">Need exclusive lockout of championship courts in Dubai, Madrid, or Miami? Our VIP concierge coordinates private access, dedicated coaching staff, and private catering.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">2. Bespoke Corporate Invitational</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0.75rem;">We organize end-to-end bespoke tournaments including custom branded rackets, live ELO leaderboards, professional umpires, and cocktail receptions.</p>
+          <h4 style="color: var(--accent-lime); font-size: 13px; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase;">3. Direct Hotline</h4>
+          <p style="color: #cbd5e1;">Contact the Private Syndicate desk via WhatsApp: <strong>+971 50 892 1100</strong> or email <strong>concierge@rallyo.club</strong> for priority concierge assistance.</p>
+        `
+      }
+    };
+
+    function openEditorialModal(docKey) {
+      const doc = EDITORIAL_DOCUMENTS[docKey];
+      if (!doc || !editorialModal) return;
+
+      document.getElementById('editorial-badge').textContent = doc.badge;
+      document.getElementById('editorial-title').textContent = doc.title;
+      document.getElementById('editorial-subtitle').textContent = doc.subtitle;
+      document.getElementById('editorial-body').innerHTML = doc.content;
+
+      editorialModal.classList.add('active');
+    }
+
+    function closeEditorialModal() {
+      if (!editorialModal) return;
+      editorialModal.classList.remove('active');
     }
   </script>
 </body>

@@ -1350,6 +1350,172 @@
     }
 
     /* -------------------------------------------------------------
+       EDITORIAL & LEGAL ARCHIVE MODAL STYLES
+    -------------------------------------------------------------- */
+    .editorial-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 2, 3, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .editorial-modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .editorial-modal-container {
+      background: #0d080a;
+      border: 1px solid rgba(201, 166, 117, 0.35);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 50px rgba(201, 166, 117, 0.12);
+      max-width: 680px;
+      width: 100%;
+      max-height: 85vh;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .editorial-close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-color);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      z-index: 10;
+    }
+
+    .editorial-close-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: rotate(90deg);
+    }
+
+    .editorial-modal-header {
+      padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .editorial-badge {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 0.6rem;
+    }
+
+    .editorial-title {
+      font-family: var(--font-editorial);
+      font-size: 32px;
+      font-weight: 400;
+      font-style: italic;
+      color: #ffffff;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .editorial-subtitle {
+      font-family: var(--font-modern);
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+    }
+
+    .editorial-modal-body {
+      padding: 2rem 2.5rem;
+      overflow-y: auto;
+      font-family: var(--font-modern);
+      font-size: 13px;
+      line-height: 1.8;
+      color: #dcdcdc;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .editorial-modal-body h4 {
+      font-family: var(--font-modern);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 0.5rem;
+    }
+
+    .editorial-modal-body p {
+      color: #b0b0b0;
+    }
+
+    .editorial-modal-footer {
+      padding: 1.25rem 2.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* Newsletter Notification Toast */
+    .newsletter-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0d080a;
+      border: 1px solid var(--accent);
+      color: #ffffff;
+      padding: 1rem 1.5rem;
+      border-radius: 4px;
+      font-family: var(--font-modern);
+      font-size: 12px;
+      letter-spacing: 1px;
+      z-index: 99999;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(201, 166, 117, 0.2);
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .newsletter-toast.active {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* -------------------------------------------------------------
        MEMBERSHIP PORTAL & ONBOARDING SYSTEM STYLES
     -------------------------------------------------------------- */
     .membership-modal-overlay {
@@ -2462,7 +2628,7 @@
               Couture engineering meets instant matchmaking. Your matches, stats, club passes, and partners unified in one tactile interface.
             </p>
           </div>
-          <a class="tri-cta-link" onclick="openMembershipModal()">Explore Digital Atelier &rarr;</a>
+          <a class="tri-cta-link" href="membership.html?role=club_owner">Explore Digital Atelier &rarr;</a>
         </div>
       </div>
 
@@ -2480,7 +2646,7 @@
               Elevate your ranking, unlock premier invitationals, and compete with athletes who share your relentless devotion to the court.
             </p>
           </div>
-          <a class="tri-cta-link" onclick="openMembershipModal()">Claim Player Passport &rarr;</a>
+          <a class="tri-cta-link" href="membership.html?role=player">Claim Player Passport &rarr;</a>
         </div>
       </div>
 
@@ -2498,7 +2664,7 @@
               The electric moment where game meets community. From the first tap of your smartphone to match point on championship glass.
             </p>
           </div>
-          <a class="tri-cta-link" onclick="openMembershipModal()">Join Next Rally &rarr;</a>
+          <a class="tri-cta-link" href="membership.html?role=player">Join Next Rally &rarr;</a>
         </div>
       </div>
     </div>
@@ -2517,8 +2683,8 @@
       <p class="newsletter-subtitle">
         Receive privileged invitations to sanctioned private tourneys, exclusive court times, and priority access as RALLYO launches in your city.
       </p>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); openMembershipModal();">
-        <input type="email" placeholder="Enter your private email" class="newsletter-input" required>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); handleNewsletterJoin(this);">
+        <input type="email" id="newsletter-email-input" placeholder="Enter your private email" class="newsletter-input" required>
         <button type="submit" class="newsletter-btn">REQUEST INVITATION</button>
       </form>
     </div>
@@ -2531,37 +2697,37 @@
   <footer class="site-footer">
     <div class="footer-top">
       <div class="footer-brand-column">
-        <div class="footer-brand">RALLYO</div>
+        <div class="footer-brand" onclick="lenisScrollTo(0)" style="cursor: pointer;">RALLYO</div>
         <div class="footer-cities-line">MADRID &bull; DUBAI &bull; STOCKHOLM &bull; LONDON &bull; MIAMI &bull; DOHA</div>
       </div>
       <div class="footer-links-grid">
         <div class="footer-nav-col">
           <span class="footer-col-title">EXPERIENCE</span>
-          <a href="#hero-track" class="footer-link">The Narrative</a>
-          <a href="#explainer" class="footer-link">Sticky Explainer</a>
-          <a href="#rail-wrapper" class="footer-link">Runway Rail</a>
-          <a href="#parallax-statement" class="footer-link">The Manifesto</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#hero-track')" class="footer-link">The Narrative</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#explainer')" class="footer-link">Sticky Explainer</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#rail-wrapper')" class="footer-link">Runway Rail</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#parallax-statement')" class="footer-link">The Manifesto</a>
         </div>
         <div class="footer-nav-col">
           <span class="footer-col-title">ECOSYSTEM</span>
-          <a href="#reverse-columns" class="footer-link">Court Sanctuaries</a>
-          <a href="#reverse-columns" class="footer-link">Doubles Matchmaking</a>
-          <a href="#final-grid" class="footer-link">Club Accreditation</a>
-          <a href="#final-grid" class="footer-link">Player Passports</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#reverse-columns')" class="footer-link">Court Sanctuaries</a>
+          <a href="javascript:void(0)" onclick="lenisScrollTo('#reverse-columns')" class="footer-link">Doubles Matchmaking</a>
+          <a href="membership.html?role=club_owner" class="footer-link">Club Accreditation</a>
+          <a href="membership.html?role=player" class="footer-link">Player Passports</a>
         </div>
         <div class="footer-nav-col">
           <span class="footer-col-title">MEMBERSHIP</span>
-          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Player Syndicate</a>
-          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Club Operator Portal</a>
-          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Private Tourneys</a>
-          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">VIP Concierge</a>
+          <a href="membership.html?role=player" class="footer-link">Player Syndicate</a>
+          <a href="membership.html?role=club_owner" class="footer-link">Club Operator Portal</a>
+          <a href="membership.html?role=player&tab=challenges" class="footer-link">Private Tourneys</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('concierge')" class="footer-link">VIP Concierge</a>
         </div>
         <div class="footer-nav-col">
           <span class="footer-col-title">LEGAL & ARCHIVE</span>
-          <a href="javascript:void(0)" class="footer-link">Privacy Charter</a>
-          <a href="javascript:void(0)" class="footer-link">Terms of Sanction</a>
-          <a href="javascript:void(0)" class="footer-link">Court Ethics</a>
-          <a href="javascript:void(0)" class="footer-link">2026 Archive</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('privacy')" class="footer-link">Privacy Charter</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('terms')" class="footer-link">Terms of Sanction</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('ethics')" class="footer-link">Court Ethics</a>
+          <a href="javascript:void(0)" onclick="openEditorialModal('archive')" class="footer-link">2026 Archive</a>
         </div>
       </div>
     </div>
@@ -2570,6 +2736,33 @@
       <p>FIND YOUR RALLY &bull; HAUTE DIGITAL ATELIER</p>
     </div>
   </footer>
+
+  <!-- =============================================================
+       EDITORIAL & LEGAL ARCHIVE MODAL DRAWER
+  ============================================================== -->
+  <div id="editorial-modal" class="editorial-modal-overlay" onclick="handleEditorialBackdrop(event)">
+    <div class="editorial-modal-container" onclick="event.stopPropagation()">
+      <button class="editorial-close-btn" onclick="closeEditorialModal()" title="Close">&times;</button>
+      <div class="editorial-modal-header">
+        <span class="editorial-badge" id="editorial-badge">RALLYO REGULATORY CHARTER</span>
+        <h3 class="editorial-title" id="editorial-title">Document Title</h3>
+        <p class="editorial-subtitle" id="editorial-subtitle">Official regulatory standards for the global padel syndicate.</p>
+      </div>
+      <div class="editorial-modal-body" id="editorial-body">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="editorial-modal-footer">
+        <button class="nav-cta" onclick="closeEditorialModal()">Acknowledge & Close</button>
+        <a href="membership.html" class="tri-cta-link" style="margin: 0; font-size: 13px;">Enter Membership Portal &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Toast Notification -->
+  <div id="newsletter-toast" class="newsletter-toast">
+    <span style="color: var(--accent); font-size: 16px;">✓</span>
+    <span id="newsletter-toast-text">Invitation request registered. Welcome to the RALLYO Syndicate.</span>
+  </div>
 
   <!-- =============================================================
        MEMBERSHIP PORTAL & ONBOARDING FLOW MODAL
@@ -3794,6 +3987,160 @@
       if (gmvEl) gmvEl.textContent = currency === 'AED' ? 'AED 5,430.00' : (currency === 'EUR' ? '€1,390.00' : '$1,480.00');
 
       switchMembershipView(viewClubDash);
+    }
+
+    /* -------------------------------------------------------------
+       10. EDITORIAL CHARTER, ARCHIVE & VIP CONCIERGE MODAL SYSTEM
+    -------------------------------------------------------------- */
+    const editorialModal = document.getElementById('editorial-modal');
+    const editorialBadge = document.getElementById('editorial-badge');
+    const editorialTitle = document.getElementById('editorial-title');
+    const editorialSubtitle = document.getElementById('editorial-subtitle');
+    const editorialBody = document.getElementById('editorial-body');
+
+    const EDITORIAL_DOCUMENTS = {
+      privacy: {
+        badge: "RALLYO DATA CHARTER",
+        title: "Global Privacy & Biometric Pass Protocol",
+        subtitle: "Enterprise-grade encryption and biometric data protection across all club access gates.",
+        content: `
+          <h4>1. Zero-Knowledge Biometric Turnstiles</h4>
+          <p>RALLYO issues dynamic QR cryptographic passes. Biometric data captured at club turnstiles (face recognition or optical QR) is verified locally on edge devices and never stored in clear text on public networks.</p>
+          <h4>2. End-to-End Match Communication</h4>
+          <p>Player lobby communications, private match negotiations, and syndicate invitations are encrypted end-to-end. We do not sell player telemetry or behavior profiles to third-party advertisers.</p>
+          <h4>3. International Compliance</h4>
+          <p>Our infrastructure complies with EU GDPR, UAE DIFC Data Protection Law No. 5 of 2020, and US California Privacy Rights Act (CPRA). You retain total ownership to export or delete your player identity at any time.</p>
+        `
+      },
+      terms: {
+        badge: "SANCTIONED COMPETITION REGULATIONS",
+        title: "Terms of Sanction & ELO Governance",
+        subtitle: "Fair play standards, ELO calibration rules, and court reservation escrow protocols.",
+        content: `
+          <h4>1. Dynamic ELO Calibration</h4>
+          <p>All rated doubles matches submitted to the RALLYO network require mutual score confirmation from both teams within 60 minutes of match completion. Disputed scores undergo automated review by the regional sanctioning board.</p>
+          <h4>2. Strict Anti-Smurfing & Identity Integrity</h4>
+          <p>Every athlete must maintain a single verified passport. Accounts engaging in artificial ranking manipulation or smurfing face immediate ELO forfeiture and invitational suspension.</p>
+          <h4>3. Reservation Escrow & Cancellation</h4>
+          <p>Court bookings through RALLYO are held in high-speed payment escrow. Free cancellation is guaranteed up to 12 hours before slot start time. Late cancellations release 50% court yield to the venue operator.</p>
+        `
+      },
+      ethics: {
+        badge: "PADEL CODE OF CONDUCT",
+        title: "Court Ethics & Glass Wall Protocol",
+        subtitle: "The unwritten laws of sportsmanship, glass safety, and court acoustics.",
+        content: `
+          <h4>1. Architectural Glass Integrity</h4>
+          <p>Respect the 12mm panoramic tempered glass enclosures. Aggressive racket contact with glass panels is strictly prohibited. Mandatory wrist tether straps must remain fastened at all times on court.</p>
+          <h4>2. High-Integrity Line Calling</h4>
+          <p>In un-refereed sanctioned matches, teams call balls on their own side of the court. When doubt arises on spin balls grazing the mesh or glass corner, standard FIP rules dictate playing a 'let' point.</p>
+          <h4>3. Community & Skycourt Etiquette</h4>
+          <p>Padel is built on camaraderie and electric momentum. Treat opponents, partners, ball boys, and club concierges with utmost respect before, during, and after every rally.</p>
+        `
+      },
+      archive: {
+        badge: "MONOLITHIC LOOKBOOK // 2026",
+        title: "The 2026 Season Architecture Archive",
+        subtitle: "Documenting our global commissions, private skycourts, and the digital atelier.",
+        content: `
+          <h4>1. Dubai Marina Glass Sanctuary</h4>
+          <p>Six monolithic panoramic glass courts overlooking the Arabian Gulf. Designed in collaboration with European padel architects featuring custom low-glare 1000-lux LED luminaires.</p>
+          <h4>2. Salamanca Private Atelier, Madrid</h4>
+          <p>Historic indoor courtyard conversion featuring acoustic resonance damping, matte-black carbon fiber nets, and subterranean recovery suites.</p>
+          <h4>3. Stockholm Skycourt & Miami Pavilion</h4>
+          <p>Rooftop installations engineered for extreme temperature resilience, ultra-pure bounce consistency, and automated drone match capture.</p>
+        `
+      },
+      concierge: {
+        badge: "VIP PADEL CONCIERGE",
+        title: "Private Syndicate & Bespoke Tourney Desk",
+        subtitle: "Private court lockouts, custom corporate championships, and bespoke racket calibration.",
+        content: `
+          <h4>1. Private Court Buyouts</h4>
+          <p>Need exclusive lockout of championship courts in Dubai, Madrid, or Miami? Our VIP concierge coordinates private access, dedicated coaching staff, and private catering.</p>
+          <h4>2. Bespoke Corporate Invitational</h4>
+          <p>We organize end-to-end bespoke tournaments including custom branded rackets, live ELO leaderboards, professional umpires, and cocktail receptions.</p>
+          <h4>3. Direct Hotline</h4>
+          <p>Contact the Private Syndicate desk via WhatsApp: <strong>+971 50 892 1100</strong> or email <strong>concierge@rallyo.club</strong> for priority concierge assistance.</p>
+        `
+      }
+    };
+
+    function openEditorialModal(docKey) {
+      const doc = EDITORIAL_DOCUMENTS[docKey];
+      if (!doc || !editorialModal) return;
+
+      editorialBadge.textContent = doc.badge;
+      editorialTitle.textContent = doc.title;
+      editorialSubtitle.textContent = doc.subtitle;
+      editorialBody.innerHTML = doc.content;
+
+      editorialModal.style.display = 'flex';
+      setTimeout(() => {
+        editorialModal.classList.add('active');
+      }, 10);
+    }
+
+    function closeEditorialModal() {
+      if (!editorialModal) return;
+      editorialModal.classList.remove('active');
+      setTimeout(() => {
+        editorialModal.style.display = 'none';
+      }, 300);
+    }
+
+    function handleEditorialBackdrop(e) {
+      if (e.target === editorialModal) {
+        closeEditorialModal();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && editorialModal && editorialModal.classList.contains('active')) {
+        closeEditorialModal();
+      }
+    });
+
+    /* -------------------------------------------------------------
+       11. SMOOTH SCROLL HELPER FOR ANCHOR LINKS
+    -------------------------------------------------------------- */
+    function lenisScrollTo(target) {
+      if (typeof lenis !== 'undefined' && lenis) {
+        if (target === '#hero-track' || target === '#' || target === 0) {
+          lenis.scrollTo(0, { duration: 1.3 });
+        } else {
+          const el = typeof target === 'string' ? document.querySelector(target) : target;
+          if (el) {
+            lenis.scrollTo(el, { duration: 1.3, offset: -40 });
+          }
+        }
+      } else {
+        const el = (target === '#hero-track' || target === 0) ? document.body : document.querySelector(target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    /* -------------------------------------------------------------
+       12. NEWSLETTER FORM HANDLER
+    -------------------------------------------------------------- */
+    function handleNewsletterJoin(form) {
+      const emailInput = form.querySelector('input[type="email"]');
+      const email = emailInput ? emailInput.value.trim() : '';
+      const toast = document.getElementById('newsletter-toast');
+      const toastText = document.getElementById('newsletter-toast-text');
+
+      if (!email || !email.includes('@')) return;
+
+      if (toast && toastText) {
+        toastText.textContent = `Privileged invitation reserved for ${email}. Redirecting to Player Syndicate...`;
+        toast.classList.add('active');
+        setTimeout(() => {
+          toast.classList.remove('active');
+          window.location.href = `membership.html?role=player&email=${encodeURIComponent(email)}`;
+        }, 1500);
+      } else {
+        window.location.href = `membership.html?role=player&email=${encodeURIComponent(email)}`;
+      }
     }
 
     ScrollTrigger.refresh();
