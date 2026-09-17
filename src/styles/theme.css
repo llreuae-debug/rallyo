@@ -1,0 +1,97 @@
+:root {
+  /* Brand Sports Palette */
+  --brand-volt: #00F576;
+  --brand-volt-bright: #39FF88;
+  --brand-volt-glow: rgba(0, 245, 118, 0.28);
+  --brand-volt-subtle: rgba(0, 245, 118, 0.12);
+  --brand-lime: #CCFF00;
+  
+  --brand-clay: #FF5E36;
+  --brand-clay-glow: rgba(255, 94, 54, 0.25);
+  
+  --brand-blue: #2563EB;
+  --brand-blue-accent: #38BDF8;
+
+  /* Background & Surfaces */
+  --bg-app: #080B11;
+  --bg-surface: #0E131F;
+  --bg-card: #141C2C;
+  --bg-card-hover: #1A2438;
+  --bg-input: #111724;
+  --bg-glass: rgba(18, 25, 40, 0.75);
+  --bg-glass-card: rgba(22, 31, 49, 0.65);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-highlight: rgba(0, 245, 118, 0.4);
+  --border-volt: #00F576;
+
+  /* Typography */
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-inverse: #080B11;
+  --text-volt: #00F576;
+
+  /* Status Colors */
+  --status-open: #00F576;
+  --status-full: #F59E0B;
+  --status-live: #EF4444;
+  --status-completed: #3B82F6;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.6);
+  --shadow-volt: 0 0 24px rgba(0, 245, 118, 0.35);
+  --shadow-clay: 0 0 20px rgba(255, 94, 54, 0.3);
+
+  /* Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Fonts */
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 245, 118, 0.4);
+}

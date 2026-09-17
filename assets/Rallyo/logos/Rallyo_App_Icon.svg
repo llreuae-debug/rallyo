@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E1626"/>
+      <stop offset="100%" stop-color="#070A12"/>
+    </linearGradient>
+
+    <!-- Neon Volt Gradient -->
+    <linearGradient id="voltGrad" x1="120" y1="100" x2="400" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#39FF88"/>
+      <stop offset="50%" stop-color="#00F576"/>
+      <stop offset="100%" stop-color="#CCFF00"/>
+    </linearGradient>
+
+    <!-- Soft Glow Filter -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Icon Base -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)"/>
+  <rect width="508" height="508" x="2" y="2" rx="118" stroke="rgba(255, 255, 255, 0.08)" stroke-width="4"/>
+
+  <!-- Minimalist Court Grid Base -->
+  <path d="M110 380H402" stroke="#00F576" stroke-opacity="0.35" stroke-width="5" stroke-linecap="round"/>
+  <path d="M256 340V420" stroke="#00F576" stroke-opacity="0.35" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Dynamic "R" Emblem Group with Neon Glow -->
+  <g filter="url(#neonGlow)">
+    <!-- Racket Head Loop (Padel teardrop shape forming the upper R loop) -->
+    <path d="M256 128 C 185 128, 160 195, 192 258 C 215 302, 256 312, 305 292 C 342 276, 360 220, 345 178 C 330 138, 298 128, 256 128 Z" 
+          fill="#10192A" 
+          stroke="url(#voltGrad)" 
+          stroke-width="22" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+
+    <!-- Padel Aerodynamic Perforations (Holes) -->
+    <circle cx="240" cy="180" r="7" fill="url(#voltGrad)"/>
+    <circle cx="272" cy="180" r="7" fill="url(#voltGrad)"/>
+    <circle cx="225" cy="210" r="7" fill="url(#voltGrad)"/>
+    <circle cx="256" cy="210" r="7" fill="url(#voltGrad)"/>
+    <circle cx="287" cy="210" r="7" fill="url(#voltGrad)"/>
+    <circle cx="240" cy="240" r="7" fill="url(#voltGrad)"/>
+    <circle cx="272" cy="240" r="7" fill="url(#voltGrad)"/>
+    <circle cx="256" cy="265" r="7" fill="url(#voltGrad)"/>
+
+    <!-- Racket Handle (Forms left stem of 'R') -->
+    <path d="M192 278 L142 376 C138 384, 144 394, 154 394 L168 394 C176 394, 184 388, 188 380 L236 295" 
+          fill="url(#voltGrad)" 
+          stroke="url(#voltGrad)" 
+          stroke-width="6" 
+          stroke-linejoin="round"/>
+
+    <!-- Right Leg of 'R' (Dynamic Angled Stroke / Grip Foot) -->
+    <path d="M275 295 L348 388 C354 396, 365 398, 375 394 L386 389 C394 384, 396 374, 390 366 L318 274" 
+          fill="url(#voltGrad)" 
+          stroke="url(#voltGrad)" 
+          stroke-width="6" 
+          stroke-linejoin="round"/>
+
+    <!-- Connection Orbit / Rally Motion Trail (Sweeps around and through the racket) -->
+    <path d="M130 220 C 122 170, 158 145, 208 140 C 275 132, 345 160, 368 205 C 385 240, 375 272, 335 285 C 290 300, 230 290, 180 260 C 145 238, 134 200, 152 165" 
+          stroke="url(#voltGrad)" 
+          stroke-width="16" 
+          stroke-linecap="round" 
+          fill="none"/>
+
+    <!-- Integrated Location Pin Motif at the Apex of 'R' -->
+    <path d="M352 145 C352 128, 366 114, 383 114 C400 114, 414 128, 414 145 C414 168, 383 194, 383 194 C383 194, 352 168, 352 145 Z" 
+          fill="url(#voltGrad)"/>
+    <circle cx="383" cy="144" r="8" fill="#0E1626"/>
+  </g>
+</svg>

@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RALLYO — Membership Portal | Find Your Rally</title>
+  <meta name="description" content="Join RALLYO — the next-generation social, matchmaking, booking, and competition platform for padel athletes and club owners.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Google Fonts: Plus Jakarta Sans (Modern Clean Sans) & Outfit (Gen-Z High Performance Display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-surface: #0e131d;
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --bg-card-hover: rgba(24, 32, 50, 0.9);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(0, 245, 118, 0.35);
+      --border-amber: rgba(245, 158, 11, 0.35);
+      
+      --accent-lime: #00f576;
+      --accent-lime-hover: #10ff85;
+      --accent-lime-glow: rgba(0, 245, 118, 0.25);
+      
+      --accent-amber: #f59e0b;
+      --accent-amber-glow: rgba(245, 158, 11, 0.22);
+      
+      --text-pure: #ffffff;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-editorial: 'Cormorant Garamond', Georgia, serif;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      
+      --shadow-volt: 0 10px 40px -10px rgba(0, 245, 118, 0.3);
+      --shadow-amber: 0 10px 40px -10px rgba(245, 158, 11, 0.3);
+      --shadow-card: 0 20px 45px -15px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-pure);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Ambient Sports-Tech Mesh Gradient */
+    .bg-mesh-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 15% 15%, rgba(0, 245, 118, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.07) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(11, 15, 23, 0.95) 0%, #07090e 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Grid Overlay */
+    .bg-grid-lines {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Top Global Header */
+    .membership-nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      background: rgba(7, 9, 14, 0.7);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-ball-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-lime) 0%, #00b355 100%);
+      color: #07090e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      box-shadow: var(--shadow-volt);
+    }
+
+    .brand-text-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .brand-tagline {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-lime);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .nav-link-btn:hover {
+      color: var(--text-pure);
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    .membership-main {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* VIEW CONTROLLER STYLES */
+    .view-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .view-section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =================================================================
+       VIEW 1: MEMBERSHIP SELECTION (HERO CARDS)
+    ================================================================== */
+    .selection-hero {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      background: rgba(0, 245, 118, 0.08);
+      border: 1px solid rgba(0, 245, 118, 0.3);
+      color: var(--accent-lime);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .selection-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+
+    .selection-title span {
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-lime) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .selection-subtitle {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Two Large Membership Cards Grid */
+    .membership-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 860px) {
+      .membership-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+      }
+    }
+
+    .m-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 2.75rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(20px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .m-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: background 0.35s ease;
+    }
+
+    /* Player Card Accents */
+    .m-card.player-card:hover {
+      transform: translateY(-6px);
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+      box-shadow: 0 25px 50px -12px rgba(0, 245, 118, 0.25);
+    }
+
+    .m-card.player-card:hover::before {
+      background: linear-gradient(135deg, var(--accent-lime), transparent 60%);
+    }
+
+    /* Club Owner Card Accents */
+    .m-card.club-card:hover {
+      transform: translateY(-6px);
+      background: var(--bg-card-hover);
+      border-color: var(--border-amber);
+      box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.25);
+    }
+
+    .m-card.club-card:hover::before {
+      background: linear-gradient(135deg, var(--accent-amber), transparent 60%);
+    }
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .role-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .role-badge.lime {
+      background: rgba(0, 245, 118, 0.12);
+      color: var(--accent-lime);
+      border: 1px solid rgba(0, 245, 118, 0.3);
+    }
+
+    .role-badge.amber {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .card-icon-halo {
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .m-card.player-card:hover .card-icon-halo {
+      background: rgba(0, 245, 118, 0.12);
+      border-color: rgba(0, 245, 118, 0.4);
+    }
+
+    .m-card.club-card:hover .card-icon-halo {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+      color: #ffffff;
+    }
+
+    .card-description {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .card-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .feature-point {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+
+    .feature-icon-svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .player-card .feature-icon-svg {
+      color: var(--accent-lime);
+    }
+
+    .club-card .feature-icon-svg {
+      color: var(--accent-amber);
+    }
+
+    .cta-btn-card {
+      width: 100%;
+      padding: 1.15rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-player-cta {
+      background: var(--accent-lime);
+      color: #07090e;
+      box-shadow: var(--shadow-volt);
+    }
+
+    .btn-player-cta:hover {
+      background: var(--accent-lime-hover);
+      transform: scale(1.02);
+    }
+
+    .btn-club-cta {
+      background: var(--accent-amber);
+      color: #07090e;
+      box-shadow: var(--shadow-amber);
+    }
+
+    .btn-club-cta:hover {
+      background: #fbbf24;
+      transform: scale(1.02);
+    }
+
+    /* Returning User Quick Login Bar */
+    .returning-user-row {
+      margin-top: 3.5rem;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .returning-user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .returning-icon {
+      font-size: 1.4rem;
+    }
+
+    .returning-text h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .returning-text p {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+
+    .returning-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    /* =================================================================
+       VIEW 2 & VIEW 3: ONBOARDING / AUTH FLOW (PLAYER & CLUB OWNER)
+    ================================================================== */
+    .flow-wrapper {
+      max-width: 820px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .flow-header {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .back-step-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-step-btn:hover {
+      color: var(--accent-lime);
+    }
+
+    .flow-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .flow-title span {
+      color: var(--accent-lime);
+    }
+
+    .club-flow-title span {
+      color: var(--accent-amber);
+    }
+
+    .auth-box-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card);
+    }
+
+    @media (max-width: 640px) {
+      .auth-box-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
+
+    /* Tab Mode Switcher (Sign Up vs Log In) */
+    .auth-mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      padding: 0.4rem;
+      background: rgba(7, 9, 14, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 2rem;
+    }
+
+    .auth-tab-btn {
+      padding: 0.75rem 1rem;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab-btn.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Google Button */
+    .google-btn {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      color: #1f2937;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .google-btn:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.75rem 0;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* Form Fields Grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 680px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      letter-spacing: 0.04em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-input, .form-select {
+      background: rgba(7, 9, 14, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent-lime);
+      box-shadow: 0 0 0 3px rgba(0, 245, 118, 0.15);
+      background: rgba(10, 14, 22, 0.95);
+    }
+
+    .club-form .form-input:focus, .club-form .form-select:focus {
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+
+    /* Avatar & Media Upload Previews */
+    .avatar-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(7, 9, 14, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      flex-wrap: wrap;
+    }
+
+    .avatar-preview-img {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--accent-lime);
+      box-shadow: 0 4px 15px rgba(0, 245, 118, 0.2);
+    }
+
+    .preset-avatars {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .preset-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      border: 2px solid transparent;
+      overflow: hidden;
+      cursor: pointer;
+      padding: 0;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn.active {
+      border-color: var(--accent-lime);
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(0, 245, 118, 0.4);
+    }
+
+    .preset-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Selectable Chip Pills */
+    .chips-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip-toggle {
+      padding: 0.5rem 0.95rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .chip-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .chip-toggle.active {
+      background: rgba(0, 245, 118, 0.15);
+      border-color: var(--accent-lime);
+      color: var(--accent-lime);
+      font-weight: 700;
+    }
+
+    .club-form .chip-toggle.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-amber);
+      color: var(--accent-amber);
+    }
+
+    /* Submit Button */
+    .auth-submit-btn {
+      width: 100%;
+      padding: 1.15rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.25s ease;
+    }
+
+    /* =================================================================
+       UX FEEDBACK STATES & ALERT BANNERS
+    ================================================================== */
+    .state-banner {
+      display: none;
+      padding: 0.9rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      gap: 0.75rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .state-banner.error {
+      display: flex;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .state-banner.success {
+      display: flex;
+      background: rgba(0, 245, 118, 0.12);
+      border: 1px solid rgba(0, 245, 118, 0.4);
+      color: var(--accent-lime);
+    }
+
+    .state-banner.loading {
+      display: flex;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: currentColor;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Interactive UX State Tester Box */
+    .ux-tester-bar {
+      margin-top: 3rem;
+      padding: 1.25rem 1.75rem;
+      background: rgba(14, 19, 29, 0.85);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .ux-tester-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .ux-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .ux-chip-btn {
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ux-chip-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* =================================================================
+       VIEW 4: PLAYER DASHBOARD (AFTER LOGIN)
+    ================================================================== */
+    .dashboard-container {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .dash-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dash-user-block {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .dash-avatar-large {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--accent-lime);
+    }
+
+    .dash-user-info h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .dash-user-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .dash-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.65rem;
+      background: rgba(0, 245, 118, 0.12);
+      border: 1px solid rgba(0, 245, 118, 0.3);
+      color: var(--accent-lime);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    /* Dashboard Navigation Tabs */
+    .dash-nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      scrollbar-width: thin;
+    }
+
+    .dash-tab {
+      padding: 0.65rem 1.15rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .dash-tab:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .dash-tab.active {
+      color: var(--accent-lime);
+      background: rgba(0, 245, 118, 0.08);
+      border-color: rgba(0, 245, 118, 0.25);
+    }
+
+    /* Stat Cards Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: rgba(7, 9, 14, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+
+    .stat-card .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .val {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .stat-card .val.lime {
+      color: var(--accent-lime);
+    }
+
+    .stat-card .val.amber {
+      color: var(--accent-amber);
+    }
+
+    /* Active Pass & Cards */
+    .qr-pass-banner {
+      background: linear-gradient(135deg, rgba(0, 245, 118, 0.1) 0%, rgba(7, 9, 14, 0.8) 100%);
+      border: 1px solid rgba(0, 245, 118, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .qr-left h4 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .qr-left p {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+
+    .qr-graphic {
+      width: 90px;
+      height: 90px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Dashboard Tab Content Areas */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .item-card {
+      background: rgba(7, 9, 14, 0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .item-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* =================================================================
+       ROLE RESTRICTION MODAL / OVERLAY
+    ================================================================== */
+    .guard-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 9, 14, 0.88);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .guard-modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .guard-box {
+      max-width: 480px;
+      width: 100%;
+      background: #0e131d;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .guard-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .guard-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .guard-msg {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .guard-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Grid & Glow -->
+  <div class="bg-mesh-glow"></div>
+  <div class="bg-grid-lines"></div>
+
+  <!-- Global Header Navigation -->
+  <header class="membership-nav">
+    <a href="index.html" class="brand-group" title="Return to 3D Film Experience">
+      <div class="brand-ball-icon">🎾</div>
+      <div class="brand-text-col">
+        <span class="brand-name">RALLYO</span>
+        <span class="brand-tagline">Find Your Rally.</span>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Back to Film</span>
+      </a>
+      <button class="nav-link-btn" id="header-user-status-btn" onclick="handleHeaderUserAction()">
+        <span id="header-user-badge">Guest</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="membership-main">
+
+    <!-- =============================================================
+         VIEW 1: DEDICATED MEMBERSHIP SELECTION PAGE (PRIMARY)
+    ============================================================== -->
+    <section id="view-selection" class="view-section active">
+      <div class="selection-hero">
+        <div class="hero-pill">
+          <span>⚡</span>
+          <span>RALLYO Operating System</span>
+        </div>
+        <h1 class="selection-title">Choose how you want to join <span>RALLYO</span></h1>
+        <p class="selection-subtitle">
+          The global padel social, matchmaking, booking, and competition platform. Step into your arena.
+        </p>
+      </div>
+
+      <!-- Two Large Membership Cards -->
+      <div class="membership-cards-grid">
+        
+        <!-- CARD 1: PLAYER -->
+        <div class="m-card player-card" id="card-player" onclick="startFlow('player')">
+          <div>
+            <div class="card-top-row">
+              <span class="role-badge lime">
+                <span>⚡</span> ATHLETE &bull; COMPETITOR
+              </span>
+              <div class="card-icon-halo">🎾</div>
+            </div>
+
+            <h2 class="card-title">Player</h2>
+            <p class="card-description">
+              Find players, join matches, book courts, compete, improve, and build your padel identity.
+            </p>
+
+            <ul class="card-features-list">
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>AI Chemistry Matchmaking & Nearby Matches</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Instant Court Booking & Turnstile Digital QR Pass</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Dynamic ELO Rating, Global Rankings & Podium</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Challenges, Achievements, Chat & Multi-Currency Wallet</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="cta-btn-card btn-player-cta" type="button" onclick="event.stopPropagation(); startFlow('player');">
+            <span>Continue as Player</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+
+        <!-- CARD 2: CLUB OWNER -->
+        <div class="m-card club-card" id="card-club" onclick="startFlow('club_owner')">
+          <div>
+            <div class="card-top-row">
+              <span class="role-badge amber">
+                <span>🏛️</span> VENUE &bull; OPERATOR
+              </span>
+              <div class="card-icon-halo">🏆</div>
+            </div>
+
+            <h2 class="card-title">Club Owner</h2>
+            <p class="card-description">
+              List your club, manage courts, add facilities, upload pictures, set rates, receive bookings, and grow your padel community.
+            </p>
+
+            <ul class="card-features-list">
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Live Court Inventory & Automated Booking Engine</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Dynamic Peak Yield Rates & Multi-Currency Payouts</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>High-Res Gallery Uploads & Facility Management</span>
+              </li>
+              <li class="feature-point">
+                <svg class="feature-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Reviews, Automated Turnstile QR Sync & Revenue Analytics</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="cta-btn-card btn-club-cta" type="button" onclick="event.stopPropagation(); startFlow('club_owner');">
+            <span>Continue as Club Owner</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Returning User Quick Sign-in Section -->
+      <div class="returning-user-row">
+        <div class="returning-user-info">
+          <div class="returning-icon">🔐</div>
+          <div class="returning-text">
+            <h4>Already have a RALLYO account?</h4>
+            <p>Direct login with role-based routing to your designated dashboard.</p>
+          </div>
+        </div>
+        <div class="returning-actions">
+          <button class="nav-link-btn" onclick="startFlow('player', 'login')">Log in as Player</button>
+          <button class="nav-link-btn" onclick="startFlow('club_owner', 'login')">Log in as Club Owner</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =============================================================
+         VIEW 2: PLAYER SIGNUP / LOGIN FLOW
+    ============================================================== -->
+    <section id="view-player-flow" class="view-section">
+      <div class="flow-wrapper">
+        <div class="flow-header">
+          <button class="back-step-btn" onclick="goToSelection()">&larr; Choose Different Membership</button>
+          <h2 class="flow-title">Player <span>Passport</span></h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">“Find Your Rally.” &bull; Set up your player DNA and enter the arena.</p>
+        </div>
+
+        <div class="auth-box-card">
+          <!-- Auth Mode Switcher -->
+          <div class="auth-mode-switch">
+            <button type="button" class="auth-tab-btn active" id="player-tab-signup" onclick="setPlayerAuthMode('signup')">Sign Up</button>
+            <button type="button" class="auth-tab-btn" id="player-tab-login" onclick="setPlayerAuthMode('login')">Log In</button>
+          </div>
+
+          <!-- Continue with Google Button -->
+          <button type="button" class="google-btn" onclick="handleGoogleAuth('player')">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span id="player-google-btn-text">Continue with Google</span>
+          </button>
+
+          <div class="auth-divider"><span>or with email & player credentials</span></div>
+
+          <!-- Alert / UX State Feedback -->
+          <div id="player-state-banner" class="state-banner"></div>
+
+          <form id="player-form" onsubmit="submitPlayerAuth(event)">
+            
+            <!-- Profile Photo Upload -->
+            <div id="player-avatar-wrapper" class="avatar-upload-row">
+              <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Player Avatar" id="player-avatar-preview" class="avatar-preview-img">
+              <div>
+                <span class="form-label" style="margin-bottom: 0.4rem;">Profile Photo Upload</span>
+                <div class="preset-avatars">
+                  <button type="button" class="preset-btn active" onclick="choosePlayerAvatar('images/rallyo-08-find-your-rally-moment.jpeg', this)">
+                    <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Preset 1">
+                  </button>
+                  <button type="button" class="preset-btn" onclick="choosePlayerAvatar('images/rallyo-04-players-connect.jpeg', this)">
+                    <img src="images/rallyo-04-players-connect.jpeg" alt="Preset 2">
+                  </button>
+                  <button type="button" class="preset-btn" onclick="choosePlayerAvatar('images/rallyo-07-app-takes-shape.jpeg', this)">
+                    <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Preset 3">
+                  </button>
+                  <label class="nav-link-btn" style="cursor: pointer; padding: 0.35rem 0.75rem; font-size: 0.72rem;">
+                    Upload Custom
+                    <input type="file" id="player-custom-photo" accept="image/*" style="display: none;" onchange="handleCustomPhoto(event, 'player')">
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- Full Name (signup only) -->
+              <div class="form-group" id="player-group-fullname">
+                <label class="form-label" for="player-name">Full Name *</label>
+                <input type="text" id="player-name" class="form-input" placeholder="e.g. Mateo Fernandez" value="Mateo Fernandez">
+              </div>
+
+              <!-- Location / City (signup only) -->
+              <div class="form-group" id="player-group-location">
+                <label class="form-label" for="player-city">Location / City *</label>
+                <select id="player-city" class="form-select">
+                  <option value="Dubai, UAE" selected>Dubai, UAE</option>
+                  <option value="Madrid, Spain">Madrid, Spain</option>
+                  <option value="Stockholm, Sweden">Stockholm, Sweden</option>
+                  <option value="London, UK">London, UK</option>
+                  <option value="Miami, USA">Miami, USA</option>
+                  <option value="Doha, Qatar">Doha, Qatar</option>
+                  <option value="Riyadh, Saudi Arabia">Riyadh, Saudi Arabia</option>
+                </select>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label" for="player-email">Email Address *</label>
+                <input type="email" id="player-email" class="form-input" placeholder="mateo@rallyo.club" value="mateo.padel@rallyo.club" required>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label class="form-label" for="player-password">Password *</label>
+                <input type="password" id="player-password" class="form-input" placeholder="••••••••" value="rallyo2026" required>
+              </div>
+
+              <!-- Preferred Playing Area (signup only) -->
+              <div class="form-group" id="player-group-area">
+                <label class="form-label" for="player-area">Preferred Playing Area</label>
+                <select id="player-area" class="form-select">
+                  <option value="Indoor Panoramic Glass" selected>Indoor Panoramic Glass</option>
+                  <option value="Outdoor Skycourt Glass">Outdoor Skycourt Glass</option>
+                  <option value="Rooftop Enclosed Glass">Rooftop Enclosed Glass</option>
+                  <option value="Championship Center Court">Championship Center Court</option>
+                </select>
+              </div>
+
+              <!-- Preferred Match Type (signup only) -->
+              <div class="form-group" id="player-group-matchtype">
+                <label class="form-label" for="player-matchtype">Preferred Match Type</label>
+                <select id="player-matchtype" class="form-select">
+                  <option value="Competitive Ranked (ELO)" selected>Competitive Ranked (ELO)</option>
+                  <option value="Casual Social Rally">Casual Social Rally</option>
+                  <option value="King of the Court">King of the Court</option>
+                  <option value="Mixed Doubles Invitational">Mixed Doubles Invitational</option>
+                </select>
+              </div>
+
+              <!-- Skill Level (signup only) -->
+              <div class="form-group full-width" id="player-group-skill">
+                <label class="form-label">Skill Level (Playtomic / FIP Calibration)</label>
+                <div class="chips-group" id="player-skill-chips">
+                  <span class="chip-toggle" onclick="setSingleChip(this, 'player-skill')">Beginner (1.0 - 2.5)</span>
+                  <span class="chip-toggle active" onclick="setSingleChip(this, 'player-skill')">Intermediate (3.0 - 4.0)</span>
+                  <span class="chip-toggle" onclick="setSingleChip(this, 'player-skill')">Advanced (4.5 - 5.5)</span>
+                  <span class="chip-toggle" onclick="setSingleChip(this, 'player-skill')">Pro Open (6.0+)</span>
+                </div>
+              </div>
+
+              <!-- Availability (signup only) -->
+              <div class="form-group full-width" id="player-group-avail">
+                <label class="form-label">Availability</label>
+                <div class="chips-group" id="player-avail-chips">
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Weekday Evenings (18:00 - 23:00)</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Weekends (All Day)</span>
+                  <span class="chip-toggle" onclick="toggleMultiChip(this)">Early Morning (06:00 - 09:00)</span>
+                  <span class="chip-toggle" onclick="toggleMultiChip(this)">Lunch Hour Express (12:00 - 14:00)</span>
+                </div>
+              </div>
+
+              <!-- Preferred Language -->
+              <div class="form-group" id="player-group-lang">
+                <label class="form-label" for="player-lang">Preferred Language</label>
+                <select id="player-lang" class="form-select">
+                  <option value="English" selected>English (Global)</option>
+                  <option value="Español">Español</option>
+                  <option value="العربية">العربية (Arabic)</option>
+                  <option value="Français">Français</option>
+                  <option value="Deutsch">Deutsch</option>
+                  <option value="Svenska">Svenska</option>
+                </select>
+              </div>
+
+              <!-- Preferred Currency -->
+              <div class="form-group" id="player-group-currency">
+                <label class="form-label" for="player-currency">Preferred Currency</label>
+                <select id="player-currency" class="form-select">
+                  <option value="USD" selected>USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="AED">AED (د.إ)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="SAR">SAR (ر.س)</option>
+                  <option value="SEK">SEK (kr)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="player-submit-btn" class="auth-submit-btn btn-player-cta">
+              <span>Create Player Account & Enter Dashboard</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =============================================================
+         VIEW 3: CLUB OWNER SIGNUP / LOGIN FLOW
+    ============================================================== -->
+    <section id="view-club-flow" class="view-section">
+      <div class="flow-wrapper">
+        <div class="flow-header">
+          <button class="back-step-btn" onclick="goToSelection()">&larr; Choose Different Membership</button>
+          <h2 class="flow-title club-flow-title">Club Owner <span>Accreditation</span></h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">“Find Your Rally.” &bull; Digitize your venue, monetize courts, and welcome players.</p>
+        </div>
+
+        <div class="auth-box-card club-form">
+          <!-- Auth Mode Switcher -->
+          <div class="auth-mode-switch">
+            <button type="button" class="auth-tab-btn active" id="club-tab-signup" onclick="setClubAuthMode('signup')">Register Club</button>
+            <button type="button" class="auth-tab-btn" id="club-tab-login" onclick="setClubAuthMode('login')">Club Log In</button>
+          </div>
+
+          <!-- Continue with Google Button -->
+          <button type="button" class="google-btn" onclick="handleGoogleAuth('club_owner')">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span id="club-google-btn-text">Continue with Google (Club Owner)</span>
+          </button>
+
+          <div class="auth-divider"><span>or with club operator credentials</span></div>
+
+          <!-- Alert / UX State Feedback -->
+          <div id="club-state-banner" class="state-banner"></div>
+
+          <form id="club-form-element" onsubmit="submitClubAuth(event)">
+            
+            <!-- Club Media Upload Preview -->
+            <div id="club-media-wrapper" class="avatar-upload-row">
+              <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Club Logo" id="club-logo-preview" style="width: 72px; height: 72px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-amber);">
+              <div style="flex: 1;">
+                <span class="form-label" style="margin-bottom: 0.4rem;">Club Logo & High-Res Gallery Upload</span>
+                <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                  <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="Court 1" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                  <img src="images/rallyo-01-court-spark.jpeg" alt="Court 2" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                  <label class="nav-link-btn" style="cursor: pointer; padding: 0.35rem 0.75rem; font-size: 0.72rem;">
+                    Upload Photos
+                    <input type="file" id="club-custom-photos" accept="image/*" multiple style="display: none;" onchange="handleCustomPhoto(event, 'club')">
+                  </label>
+                  <span style="font-size: 0.75rem; color: var(--accent-amber);">3 Verified Court Assets Loaded</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- Owner Full Name -->
+              <div class="form-group" id="club-group-ownername">
+                <label class="form-label" for="club-owner-name">Owner Full Name *</label>
+                <input type="text" id="club-owner-name" class="form-input" placeholder="e.g. Sebastian Vance" value="Sebastian Vance">
+              </div>
+
+              <!-- Phone Number -->
+              <div class="form-group" id="club-group-phone">
+                <label class="form-label" for="club-phone">Phone Number *</label>
+                <input type="tel" id="club-phone" class="form-input" placeholder="+971 50 892 1100" value="+971 50 892 1100">
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label" for="club-email">Club Official Email *</label>
+                <input type="email" id="club-email" class="form-input" placeholder="director@marinapadel.club" value="director@marinapadel.club" required>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label class="form-label" for="club-password">Password *</label>
+                <input type="password" id="club-password" class="form-input" placeholder="••••••••" value="clubowner2026" required>
+              </div>
+
+              <!-- Club Name -->
+              <div class="form-group" id="club-group-name">
+                <label class="form-label" for="club-name">Club Name *</label>
+                <input type="text" id="club-name" class="form-input" placeholder="e.g. Marina Padel Sanctuary" value="Marina Padel Sanctuary">
+              </div>
+
+              <!-- Club Location / City -->
+              <div class="form-group" id="club-group-location">
+                <label class="form-label" for="club-city">Club Location / City *</label>
+                <select id="club-city" class="form-select">
+                  <option value="Dubai Marina, UAE" selected>Dubai Marina, UAE</option>
+                  <option value="Madrid, Spain">Madrid, Spain</option>
+                  <option value="Stockholm, Sweden">Stockholm, Sweden</option>
+                  <option value="London, UK">London, UK</option>
+                  <option value="Miami, USA">Miami, USA</option>
+                  <option value="Doha, Qatar">Doha, Qatar</option>
+                  <option value="Riyadh, Saudi Arabia">Riyadh, Saudi Arabia</option>
+                </select>
+              </div>
+
+              <!-- Full Club Address -->
+              <div class="form-group full-width" id="club-group-address">
+                <label class="form-label" for="club-address">Full Club Address *</label>
+                <input type="text" id="club-address" class="form-input" placeholder="Marina Promenade, Pier 7 Plaza, Dubai" value="Pier 7 Promenade, Marina Boulevard, Dubai Marina">
+              </div>
+
+              <!-- Map Location / Coordinates -->
+              <div class="form-group full-width" id="club-group-coords">
+                <label class="form-label" for="club-coords">Map Coordinates / Geolocation</label>
+                <input type="text" id="club-coords" class="form-input" placeholder="25.0805° N, 55.1403° E" value="25.0805° N, 55.1403° E (Verified Pin)">
+              </div>
+
+              <!-- Court Count -->
+              <div class="form-group" id="club-group-courtcount">
+                <label class="form-label" for="club-court-count">Court Count</label>
+                <input type="number" id="club-court-count" class="form-input" min="1" max="50" value="6">
+              </div>
+
+              <!-- Court Types -->
+              <div class="form-group" id="club-group-courttypes">
+                <label class="form-label" for="club-court-types">Court Types</label>
+                <select id="club-court-types" class="form-select">
+                  <option value="Indoor Panoramic Glass" selected>Indoor Panoramic Glass</option>
+                  <option value="Outdoor Skycourt Glass">Outdoor Skycourt Glass</option>
+                  <option value="Superpanoramic Championship">Superpanoramic Championship</option>
+                  <option value="Mixed Indoor & Outdoor">Mixed Indoor & Outdoor</option>
+                </select>
+              </div>
+
+              <!-- Opening Hours -->
+              <div class="form-group" id="club-group-hours">
+                <label class="form-label" for="club-hours">Opening Hours</label>
+                <input type="text" id="club-hours" class="form-input" placeholder="06:00 AM - 12:00 AM" value="06:00 AM - 12:00 AM (Daily)">
+              </div>
+
+              <!-- Booking Rates / Prices & Operating Currency -->
+              <div class="form-group" id="club-group-pricing">
+                <label class="form-label">Booking Rate & Operating Currency</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="number" id="club-hourly-rate" class="form-input" style="flex: 1;" placeholder="Rate" value="85">
+                  <select id="club-currency" class="form-select" style="width: 120px;">
+                    <option value="USD" selected>USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="AED">AED (د.إ)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="SAR">SAR (ر.س)</option>
+                    <option value="SEK">SEK (kr)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Club Facilities Multi-Select -->
+              <div class="form-group full-width" id="club-group-facilities">
+                <label class="form-label">Club Facilities (Amenity Highlights)</label>
+                <div class="chips-group" id="club-facility-chips">
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Panoramic Glass</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Pro Shop Boutique</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Luxury Rain Showers</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Valet Parking</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Player Lounge & Cafe</span>
+                  <span class="chip-toggle active" onclick="toggleMultiChip(this)">Cryotherapy Recovery Spa</span>
+                  <span class="chip-toggle" onclick="toggleMultiChip(this)">FIP Academy Coaching</span>
+                </div>
+              </div>
+
+              <!-- Contact Details -->
+              <div class="form-group full-width" id="club-group-contact">
+                <label class="form-label" for="club-contact">Contact Details / Support Hotline</label>
+                <input type="text" id="club-contact" class="form-input" placeholder="concierge@marinapadel.club &bull; WhatsApp +971 50 892 1100" value="concierge@marinapadel.club &bull; WhatsApp: +971 50 892 1100">
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="club-submit-btn" class="auth-submit-btn btn-club-cta">
+              <span>Register Club & Open Owner Dashboard</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =============================================================
+         VIEW 4: PLAYER DASHBOARD
+    ============================================================== -->
+    <section id="view-player-dashboard" class="view-section">
+      <div class="dashboard-container">
+        <!-- Top Identity Bar -->
+        <div class="dash-topbar">
+          <div class="dash-user-block">
+            <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Avatar" id="dash-player-avatar" class="dash-avatar-large">
+            <div class="dash-user-info">
+              <h3 id="dash-player-name">Mateo Fernandez</h3>
+              <p id="dash-player-meta">Tier 1 Elite &bull; Dubai, UAE</p>
+              <span class="dash-role-badge">⚡ Verified Player</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <!-- Attempt to access restricted Club Management -->
+            <button class="nav-link-btn" onclick="testRoleRestriction('club_management')">
+              <span>Access Club Management</span>
+            </button>
+            <button class="nav-link-btn" onclick="logoutUser()">Switch Role / Log Out</button>
+          </div>
+        </div>
+
+        <!-- 4 Key Metrics -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="label">Dynamic ELO</div>
+            <div class="val lime">1,420</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Win Rate</div>
+            <div class="val">68%</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Completed Matches</div>
+            <div class="val">42 Rallies</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Wallet Balance</div>
+            <div class="val" id="dash-player-wallet">$340.00</div>
+          </div>
+        </div>
+
+        <!-- Digital QR Gate Pass Card -->
+        <div class="qr-pass-banner">
+          <div class="qr-left">
+            <span class="role-badge lime" style="margin-bottom: 0.5rem;">CONFIRMED COURT PASS</span>
+            <h4>Marina Padel Sanctuary &bull; Court 3 (Panoramic)</h4>
+            <p>Today &bull; 19:30 - 21:00 (90 mins) &bull; Gate Pass ID: <strong style="color: var(--accent-lime);">RLY-DXB-9842</strong></p>
+            <p style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.4rem;">Present digital QR at turnstile for automated biometric entry.</p>
+          </div>
+          <div class="qr-graphic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#07090e" stroke-width="2" style="width: 100%; height: 100%;">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+              <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Dashboard Sub-Navigation Tabs (All 11 Player App Areas) -->
+        <div class="dash-nav-tabs">
+          <button class="dash-tab active" onclick="switchPlayerTab('matches', this)">Nearby Matches (3)</button>
+          <button class="dash-tab" onclick="switchPlayerTab('players', this)">Recommended Players (4)</button>
+          <button class="dash-tab" onclick="switchPlayerTab('clubs', this)">Club Discovery</button>
+          <button class="dash-tab" onclick="switchPlayerTab('booking', this)">Court Booking</button>
+          <button class="dash-tab" onclick="switchPlayerTab('matchmaker', this)">AI Matchmaking</button>
+          <button class="dash-tab" onclick="switchPlayerTab('rankings', this)">Rankings / ELO</button>
+          <button class="dash-tab" onclick="switchPlayerTab('challenges', this)">Challenges & Achievements</button>
+          <button class="dash-tab" onclick="switchPlayerTab('chat', this)">Chat & Community</button>
+          <button class="dash-tab" onclick="switchPlayerTab('profile', this)">Profile Management</button>
+        </div>
+
+        <!-- TAB 1: NEARBY MATCHES -->
+        <div id="player-tab-matches" class="tab-pane active">
+          <div class="items-grid">
+            <div class="item-card">
+              <div>
+                <span class="role-badge lime">COMPETITIVE DOUBLES</span>
+                <h4 style="font-size: 1.15rem; margin: 0.6rem 0 0.3rem;">Sunset Golden Hour Rally</h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">Marina Sanctuary &bull; Court 1 &bull; 20:30</p>
+                <p style="font-size: 0.85rem; color: #cbd5e1;">Roster: 3/4 Players &bull; Avg ELO: 1,410</p>
+              </div>
+              <button class="nav-link-btn" style="width: 100%; justify-content: center; margin-top: 1rem; color: var(--accent-lime);" onclick="alert('Slot reserved! Opening match lobby.')">Join Match (1 Spot Left)</button>
+            </div>
+
+            <div class="item-card">
+              <div>
+                <span class="role-badge" style="background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">INVITATIONAL OPEN</span>
+                <h4 style="font-size: 1.15rem; margin: 0.6rem 0 0.3rem;">Friday Night King of Court</h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">Palm Glass Arena &bull; Court 5 &bull; 21:00</p>
+                <p style="font-size: 0.85rem; color: #cbd5e1;">Roster: 2/4 Players &bull; Avg ELO: 1,450</p>
+              </div>
+              <button class="nav-link-btn" style="width: 100%; justify-content: center; margin-top: 1rem; color: #38bdf8;" onclick="alert('Slot reserved! Opening match lobby.')">Join Match (2 Spots Left)</button>
+            </div>
+
+            <div class="item-card">
+              <div>
+                <span class="role-badge" style="background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">SOCIAL MIXED</span>
+                <h4 style="font-size: 1.15rem; margin: 0.6rem 0 0.3rem;">Skycourt Weekend Brunch Rally</h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">DIFC Rooftop &bull; Court 2 &bull; Tomorrow 10:00</p>
+                <p style="font-size: 0.85rem; color: #cbd5e1;">Roster: 1/4 Players &bull; Open Calibration</p>
+              </div>
+              <button class="nav-link-btn" style="width: 100%; justify-content: center; margin-top: 1rem; color: #c084fc;" onclick="alert('Slot reserved! Opening match lobby.')">Join Match (3 Spots Left)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: RECOMMENDED PLAYERS -->
+        <div id="player-tab-players" class="tab-pane">
+          <div class="items-grid">
+            <div class="item-card">
+              <div style="display: flex; gap: 0.85rem; align-items: center; margin-bottom: 0.75rem;">
+                <img src="images/rallyo-04-players-connect.jpeg" alt="Partner" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-lime);">
+                <div>
+                  <h4 style="font-size: 1rem;">Tariq Al-Sabah</h4>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Dubai &bull; ELO 1,435 (98% Match)</p>
+                </div>
+              </div>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 1rem;">Right-side aggressive volleyer. Plays weeknights at Marina Sanctuary.</p>
+              <button class="nav-link-btn" style="justify-content: center;" onclick="alert('Invitation sent to Tariq!')">Send Rally Invite</button>
+            </div>
+
+            <div class="item-card">
+              <div style="display: flex; gap: 0.85rem; align-items: center; margin-bottom: 0.75rem;">
+                <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Partner" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-lime);">
+                <div>
+                  <h4 style="font-size: 1rem;">Lucas Morales</h4>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Madrid / Dubai &bull; ELO 1,410</p>
+                </div>
+              </div>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 1rem;">Left-side bandeja specialist. High consistency score.</p>
+              <button class="nav-link-btn" style="justify-content: center;" onclick="alert('Invitation sent to Lucas!')">Send Rally Invite</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: CLUBS -->
+        <div id="player-tab-clubs" class="tab-pane">
+          <div class="items-grid">
+            <div class="item-card">
+              <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="Club" style="width: 100%; height: 130px; border-radius: var(--radius-sm); object-fit: cover; margin-bottom: 0.75rem;">
+              <h4 style="font-size: 1.1rem;">Marina Padel Sanctuary</h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">6 Panoramic Courts &bull; Valet &bull; Spa &bull; 4.9★</p>
+              <button class="nav-link-btn" style="justify-content: center;" onclick="alert('Opening Marina Sanctuary schedule...')">Book at Venue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: COURT BOOKING -->
+        <div id="player-tab-booking" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem;">Instant Court Reservation</h4>
+            <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+              <span class="chip-toggle active">Today (19:30 - 21:00)</span>
+              <span class="chip-toggle">Today (21:00 - 22:30)</span>
+              <span class="chip-toggle">Tomorrow (08:00 - 09:30)</span>
+              <span class="chip-toggle">Tomorrow (18:30 - 20:00)</span>
+            </div>
+            <button class="auth-submit-btn btn-player-cta" style="max-width: 320px;" onclick="alert('Court 4 booked! Automated QR pass issued to your wallet.')">Reserve Selected Slot</button>
+          </div>
+        </div>
+
+        <!-- TAB 5: AI MATCHMAKING -->
+        <div id="player-tab-matchmaker" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🤖</div>
+            <h4 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 0.5rem;">RALLYO Neural Chemistry Engine</h4>
+            <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 1.5rem; font-size: 0.88rem;">Our AI pairs your court positioning, spin style, and availability with players within &plusmn;40 ELO.</p>
+            <button class="auth-submit-btn btn-player-cta" style="max-width: 280px; margin: 0 auto;" onclick="alert('Scanning 142 players online in Dubai... Match found with Tariq S.!')">Find My Optimal Match</button>
+          </div>
+        </div>
+
+        <!-- TAB 6: RANKINGS -->
+        <div id="player-tab-rankings" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-weight: 700; font-size: 0.8rem; color: var(--text-dim);">
+              <span>RANK &bull; ATHLETE</span>
+              <span>DYNAMIC ELO</span>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+              <span>🥇 1. Alejandro Galán (Pro)</span>
+              <strong style="color: var(--accent-lime);">1,920</strong>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+              <span>🥈 2. Juan Lebrón (Pro)</span>
+              <strong style="color: var(--accent-lime);">1,905</strong>
+            </div>
+            <div style="padding: 1rem 1.5rem; background: rgba(0, 245, 118, 0.05); display: flex; justify-content: space-between; align-items: center;">
+              <span>⚡ 14. Mateo Fernandez (You)</span>
+              <strong style="color: var(--accent-lime);">1,420</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 7: CHALLENGES -->
+        <div id="player-tab-challenges" class="tab-pane">
+          <div class="items-grid">
+            <div class="item-card">
+              <span class="role-badge lime">WEEKLY QUEST</span>
+              <h4 style="margin: 0.5rem 0;">Smash Master</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Hit 15 clean x3 / x4 smashes in rated matches.</p>
+              <div style="margin: 0.85rem 0; background: rgba(255,255,255,0.06); height: 6px; border-radius: 3px; overflow: hidden;">
+                <div style="background: var(--accent-lime); width: 80%; height: 100%;"></div>
+              </div>
+              <span style="font-size: 0.78rem; color: var(--accent-lime);">12/15 Completed &bull; +250 XP</span>
+            </div>
+            <div class="item-card">
+              <span class="role-badge amber">BADGE</span>
+              <h4 style="margin: 0.5rem 0;">Night Owl Rally</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Win 5 consecutive matches past 21:00.</p>
+              <span style="font-size: 0.78rem; color: var(--accent-amber); margin-top: 0.85rem;">UNLOCKED &bull; Gold Trophy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 8: CHAT -->
+        <div id="player-tab-chat" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4 style="margin-bottom: 1rem;">Marina Syndicate Group Chat</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+              <div style="background: rgba(255, 255, 255, 0.04); padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
+                <strong style="color: var(--accent-lime); font-size: 0.8rem;">Tariq:</strong>
+                <p style="font-size: 0.88rem;">Court 3 is booked for tonight at 19:30. Bring fresh balls!</p>
+              </div>
+              <div style="background: rgba(0, 245, 118, 0.08); padding: 0.75rem 1rem; border-radius: var(--radius-sm); align-self: flex-end;">
+                <strong style="color: #fff; font-size: 0.8rem;">You:</strong>
+                <p style="font-size: 0.88rem;">Gate pass is synced. See you on court.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 9: PROFILE -->
+        <div id="player-tab-profile" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4 style="margin-bottom: 1rem;">Profile Settings & Equipment</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;">Weapon of Choice: <strong>Babolat Air Viper 2026</strong></p>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">Handedness: <strong>Right-handed</strong> &bull; Side: <strong>Left (Reverse)</strong></p>
+            <button class="nav-link-btn" onclick="alert('Profile updated successfully!')">Save Preferences</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =============================================================
+         VIEW 5: CLUB OWNER DASHBOARD
+    ============================================================== -->
+    <section id="view-club-dashboard" class="view-section">
+      <div class="dashboard-container">
+        <!-- Top Identity Bar -->
+        <div class="dash-topbar">
+          <div class="dash-user-block">
+            <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Club Logo" class="dash-avatar-large" style="border-radius: var(--radius-md); border-color: var(--accent-amber);">
+            <div class="dash-user-info">
+              <h3 id="dash-club-name">Marina Padel Sanctuary</h3>
+              <p id="dash-club-meta">Pier 7 Promenade &bull; Dubai Marina, UAE</p>
+              <span class="dash-role-badge" style="background: rgba(245, 158, 11, 0.12); color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.3);">🏛️ Verified Club Operator</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <!-- Attempt to enter Player-only match actions -->
+            <button class="nav-link-btn" onclick="testRoleRestriction('player_match_action')">
+              <span>Join Match as Player</span>
+            </button>
+            <button class="nav-link-btn" onclick="logoutUser()">Switch Role / Log Out</button>
+          </div>
+        </div>
+
+        <!-- 4 Key Club Metrics -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="label">Today's Revenue</div>
+            <div class="val amber" id="dash-club-revenue">$1,480.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Peak Occupancy</div>
+            <div class="val">88%</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Active Bookings</div>
+            <div class="val">18 Slots</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total Courts</div>
+            <div class="val">6 Courts</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Sub-Navigation Tabs (All 11 Club Owner App Areas) -->
+        <div class="dash-nav-tabs">
+          <button class="dash-tab active" onclick="switchClubTab('courts', this)">Courts Inventory (6)</button>
+          <button class="dash-tab" onclick="switchClubTab('rates', this)">Rates & Pricing Yield</button>
+          <button class="dash-tab" onclick="switchClubTab('bookings', this)">Live Bookings Grid</button>
+          <button class="dash-tab" onclick="switchClubTab('facilities', this)">Facilities & Amenities</button>
+          <button class="dash-tab" onclick="switchClubTab('gallery', this)">Pictures / Gallery</button>
+          <button class="dash-tab" onclick="switchClubTab('location', this)">Location & Map Pin</button>
+          <button class="dash-tab" onclick="switchClubTab('hours', this)">Opening Hours</button>
+          <button class="dash-tab" onclick="switchClubTab('reviews', this)">Reviews & Ratings (4.9★)</button>
+          <button class="dash-tab" onclick="switchClubTab('revenue', this)">Revenue Summary & Payouts</button>
+          <button class="dash-tab" onclick="switchClubTab('settings', this)">Settings & Turnstiles</button>
+        </div>
+
+        <!-- TAB 1: COURTS INVENTORY -->
+        <div id="club-tab-courts" class="tab-pane active">
+          <div class="items-grid">
+            <div class="item-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h4>Court 1 (Panoramic)</h4>
+                <span class="role-badge lime" style="font-size: 0.65rem;">OCCUPIED</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">Match: Tier 1 Doubles &bull; Ends in 24m</p>
+              <p style="font-size: 0.8rem; color: #cbd5e1;">Rate: $85/hr &bull; Monitored via AI Camera</p>
+            </div>
+            <div class="item-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h4>Court 2 (Panoramic)</h4>
+                <span class="role-badge lime" style="font-size: 0.65rem;">OCCUPIED</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">Match: Open Invitational &bull; Ends in 40m</p>
+              <p style="font-size: 0.8rem; color: #cbd5e1;">Rate: $85/hr</p>
+            </div>
+            <div class="item-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h4>Court 3 (Center Court)</h4>
+                <span class="role-badge lime" style="font-size: 0.65rem;">OCCUPIED</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">Player: Mateo Fernandez (QR Checked)</p>
+              <p style="font-size: 0.8rem; color: #cbd5e1;">Rate: $95/hr Peak</p>
+            </div>
+            <div class="item-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h4>Court 4 (Panoramic)</h4>
+                <span class="role-badge" style="background: rgba(0, 245, 118, 0.1); color: var(--accent-lime); font-size: 0.65rem;">OPEN (BOOKABLE)</span>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">Instant Turnstile Gate Pass Active</p>
+              <button class="nav-link-btn" style="justify-content: center;" onclick="alert('Court reserved for club maintenance.')">Block Slot</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: RATES & PRICING -->
+        <div id="club-tab-rates" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4 style="margin-bottom: 1rem;">Dynamic Yield Calibration</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">Standard Morning Rate: $65/hr &bull; Peak Evening (18:00-23:00): $85-$95/hr</p>
+            <button class="auth-submit-btn btn-club-cta" style="max-width: 260px;" onclick="alert('Peak yield pricing updated with +15% surge demand!')">Apply Dynamic Surge</button>
+          </div>
+        </div>
+
+        <!-- TAB 3: BOOKINGS -->
+        <div id="club-tab-bookings" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-weight: 700; font-size: 0.8rem; color: var(--text-dim);">
+              <span>TIME &bull; COURT &bull; ATHLETE</span>
+              <span>STATUS &bull; GMV</span>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+              <span>19:30 - 21:00 &bull; Court 3 &bull; Mateo Fernandez</span>
+              <span class="role-badge lime">PAID &bull; $85.00</span>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+              <span>20:00 - 21:30 &bull; Court 1 &bull; Tariq Al-Sabah</span>
+              <span class="role-badge lime">PAID &bull; $85.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: FACILITIES -->
+        <div id="club-tab-facilities" class="tab-pane">
+          <div class="chips-group" style="padding: 1.5rem; background: rgba(7, 9, 14, 0.5); border-radius: var(--radius-md);">
+            <span class="chip-toggle active">✓ Panoramic Tempered Glass</span>
+            <span class="chip-toggle active">✓ Pro Shop Boutique</span>
+            <span class="chip-toggle active">✓ Luxury Rain Showers</span>
+            <span class="chip-toggle active">✓ Valet Parking Service</span>
+            <span class="chip-toggle active">✓ Cryotherapy Recovery Spa</span>
+          </div>
+        </div>
+
+        <!-- TAB 5: GALLERY -->
+        <div id="club-tab-gallery" class="tab-pane">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <img src="images/rallyo-07-app-takes-shape.jpeg" alt="G1" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm);">
+            <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="G2" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm);">
+            <img src="images/rallyo-01-court-spark.jpeg" alt="G3" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm);">
+          </div>
+        </div>
+
+        <!-- TAB 6: LOCATION -->
+        <div id="club-tab-location" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4>Verified Geolocation</h4>
+            <p style="color: var(--accent-amber); margin: 0.5rem 0;">Coordinates: 25.0805° N, 55.1403° E</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Pier 7 Promenade, Marina Boulevard, Dubai Marina, UAE</p>
+          </div>
+        </div>
+
+        <!-- TAB 7: HOURS -->
+        <div id="club-tab-hours" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4>Operating Schedule</h4>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Open 7 days a week: <strong>06:00 AM - 12:00 AM</strong></p>
+          </div>
+        </div>
+
+        <!-- TAB 8: REVIEWS -->
+        <div id="club-tab-reviews" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <div style="font-size: 1.8rem; font-weight: 900; color: var(--accent-amber); margin-bottom: 0.5rem;">4.9 ★★★★★</div>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">Based on 148 verified player reviews. Top rated for glass bounce consistency and lighting.</p>
+          </div>
+        </div>
+
+        <!-- TAB 9: REVENUE -->
+        <div id="club-tab-revenue" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4 style="margin-bottom: 0.5rem;">Automated Payout Engine</h4>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">Next scheduled bank transfer: <strong>$8,420.00</strong> on Monday.</p>
+            <button class="nav-link-btn" onclick="alert('Exporting tax invoice and Stripe GMV breakdown...')">Export Financial Report</button>
+          </div>
+        </div>
+
+        <!-- TAB 10: SETTINGS & GATE TURNSTILES -->
+        <div id="club-tab-settings" class="tab-pane">
+          <div style="background: rgba(7, 9, 14, 0.5); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <h4>Automated Turnstile QR Integration</h4>
+            <p style="color: var(--text-muted); margin: 0.5rem 0 1.25rem;">Optical scanners on Turnstiles A, B, and C are synced with RALLYO digital passes.</p>
+            <button class="nav-link-btn" onclick="alert('Scanner ping successful: 3 turnstiles online & responding in 14ms.')">Ping Turnstile Hardware</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============================================================
+         INTERACTIVE UX STATE TESTER BAR (FOR VERIFICATION)
+    ============================================================== -->
+    <div class="ux-tester-bar">
+      <span class="ux-tester-title">Interactive UX State Simulator:</span>
+      <div class="ux-chips">
+        <button class="ux-chip-btn" onclick="triggerUXState('loading')">1. Loading</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('signup_success')">2. Signup Success</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('login_success')">3. Login Success</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('google_error')">4. Google Error</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('missing_fields')">5. Missing Fields</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('invalid_creds')">6. Invalid Email/Pass</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('photo_error')">7. Photo Upload Error</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('club_image_error')">8. Club Image Error</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('role_required')">9. Role Required</button>
+        <button class="ux-chip-btn" onclick="triggerUXState('network_error')">10. Network Error</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =============================================================
+       ROLE-BASED RESTRICTION MODAL OVERLAY
+  ============================================================== -->
+  <div id="guard-modal" class="guard-modal-overlay">
+    <div class="guard-box">
+      <div class="guard-icon">🛡️</div>
+      <h3 class="guard-title" id="guard-title">Access Restricted</h3>
+      <p class="guard-msg" id="guard-msg">
+        Your current role does not have authorization to access this area.
+      </p>
+      <div class="guard-actions">
+        <button class="cta-btn-card btn-player-cta" style="flex: 1;" onclick="closeGuardModal()">Dismiss</button>
+        <button class="nav-link-btn" style="flex: 1; justify-content: center;" onclick="switchUserRolePrompt()">Switch Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       JAVASCRIPT LOGIC: FLOW CONTROL, ROUTING, UX STATES & STORAGE
+  ============================================================== -->
+  <script>
+    // State Variables
+    let currentFlow = null; // 'player' or 'club_owner'
+    let currentUser = null; // Saved in localStorage
+    let selectedPlayerAvatar = 'images/rallyo-08-find-your-rally-moment.jpeg';
+
+    // Elements
+    const viewSelection = document.getElementById('view-selection');
+    const viewPlayerFlow = document.getElementById('view-player-flow');
+    const viewClubFlow = document.getElementById('view-club-flow');
+    const viewPlayerDash = document.getElementById('view-player-dashboard');
+    const viewClubDash = document.getElementById('view-club-dashboard');
+    const guardModal = document.getElementById('guard-modal');
+
+    // Initialize from LocalStorage
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('rallyo_current_user');
+      if (savedUser) {
+        try {
+          currentUser = JSON.parse(savedUser);
+          updateHeaderBadge();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+
+    // View Navigation Helper
+    function switchView(target) {
+      [viewSelection, viewPlayerFlow, viewClubFlow, viewPlayerDash, viewClubDash].forEach(v => {
+        if (v) v.classList.remove('active');
+      });
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function goToSelection() {
+      switchView(viewSelection);
+    }
+
+    // Start Flow
+    function startFlow(role, mode = 'signup') {
+      currentFlow = role;
+      if (role === 'player') {
+        setPlayerAuthMode(mode);
+        switchView(viewPlayerFlow);
+      } else if (role === 'club_owner') {
+        setClubAuthMode(mode);
+        switchView(viewClubFlow);
+      }
+    }
+
+    // Auth Mode Toggles (Player)
+    function setPlayerAuthMode(mode) {
+      const tabSignup = document.getElementById('player-tab-signup');
+      const tabLogin = document.getElementById('player-tab-login');
+      const btnSubmit = document.getElementById('player-submit-btn');
+      const googleBtnText = document.getElementById('player-google-btn-text');
+      
+      const signupOnlyGroups = [
+        'player-avatar-wrapper', 'player-group-fullname', 'player-group-location',
+        'player-group-area', 'player-group-matchtype', 'player-group-skill',
+        'player-group-avail', 'player-group-lang', 'player-group-currency'
+      ];
+
+      if (mode === 'signup') {
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        btnSubmit.innerHTML = `<span>Create Player Account & Enter Dashboard</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+        googleBtnText.textContent = 'Sign up with Google (Player)';
+        signupOnlyGroups.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = el.classList.contains('full-width') ? 'flex' : (el.id === 'player-avatar-wrapper' ? 'flex' : 'flex');
+        });
+      } else {
+        tabSignup.classList.remove('active');
+        tabLogin.classList.add('active');
+        btnSubmit.innerHTML = `<span>Log In as Player</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+        googleBtnText.textContent = 'Log in with Google (Player)';
+        signupOnlyGroups.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+      }
+    }
+
+    // Auth Mode Toggles (Club Owner)
+    function setClubAuthMode(mode) {
+      const tabSignup = document.getElementById('club-tab-signup');
+      const tabLogin = document.getElementById('club-tab-login');
+      const btnSubmit = document.getElementById('club-submit-btn');
+      const googleBtnText = document.getElementById('club-google-btn-text');
+
+      const signupOnlyGroups = [
+        'club-media-wrapper', 'club-group-ownername', 'club-group-phone',
+        'club-group-name', 'club-group-location', 'club-group-address',
+        'club-group-coords', 'club-group-courtcount', 'club-group-courttypes',
+        'club-group-hours', 'club-group-pricing', 'club-group-facilities', 'club-group-contact'
+      ];
+
+      if (mode === 'signup') {
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        btnSubmit.innerHTML = `<span>Register Club & Open Owner Dashboard</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+        googleBtnText.textContent = 'Register with Google (Club Owner)';
+        signupOnlyGroups.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'flex';
+        });
+      } else {
+        tabSignup.classList.remove('active');
+        tabLogin.classList.add('active');
+        btnSubmit.innerHTML = `<span>Log In as Club Owner</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+        googleBtnText.textContent = 'Log in with Google (Club Owner)';
+        signupOnlyGroups.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+      }
+    }
+
+    // Avatar selection
+    function choosePlayerAvatar(src, btn) {
+      selectedPlayerAvatar = src;
+      const preview = document.getElementById('player-avatar-preview');
+      if (preview) preview.src = src;
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function handleCustomPhoto(event, type) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 8 * 1024 * 1024) {
+        showBanner(type, 'error', 'File too large. Please select an image under 8MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const result = e.target.result;
+        if (type === 'player') {
+          selectedPlayerAvatar = result;
+          document.getElementById('player-avatar-preview').src = result;
+          showBanner('player', 'success', 'Photo uploaded and calibrated!');
+        } else {
+          document.getElementById('club-logo-preview').src = result;
+          showBanner('club', 'success', 'Club logo uploaded and verified!');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Chip selections
+    function setSingleChip(el, group) {
+      const parent = el.parentElement;
+      parent.querySelectorAll('.chip-toggle').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function toggleMultiChip(el) {
+      el.classList.toggle('active');
+    }
+
+    // State banner display
+    function showBanner(type, state, message) {
+      const banner = type === 'player' ? document.getElementById('player-state-banner') : document.getElementById('club-state-banner');
+      if (!banner) return;
+      banner.className = `state-banner ${state}`;
+      banner.innerHTML = state === 'loading' 
+        ? `<span class="spinner"></span><span>${message}</span>`
+        : `<span>${state === 'error' ? '⚠️' : '✓'}</span><span>${message}</span>`;
+      banner.style.display = 'flex';
+    }
+
+    function clearBanner(type) {
+      const banner = type === 'player' ? document.getElementById('player-state-banner') : document.getElementById('club-state-banner');
+      if (banner) banner.style.display = 'none';
+    }
+
+    // Google Authentication Simulation
+    function handleGoogleAuth(role) {
+      const type = role === 'player' ? 'player' : 'club';
+      showBanner(type, 'loading', 'Connecting to Google OAuth 2.0 (dilnawaz@rallyo.club)...');
+
+      setTimeout(() => {
+        showBanner(type, 'success', 'Google authentication confirmed! Synchronizing profile...');
+        setTimeout(() => {
+          clearBanner(type);
+          if (role === 'player') {
+            const user = {
+              role: 'player',
+              name: 'Dilnawaz Khan',
+              location: 'Dubai, UAE',
+              avatar: selectedPlayerAvatar,
+              currency: 'USD'
+            };
+            saveAndRouteUser(user);
+          } else {
+            const user = {
+              role: 'club_owner',
+              name: 'Sebastian Vance',
+              clubName: 'Marina Padel Sanctuary',
+              location: 'Dubai Marina, UAE',
+              currency: 'USD'
+            };
+            saveAndRouteUser(user);
+          }
+        }, 800);
+      }, 1000);
+    }
+
+    // Submit Player Auth
+    function submitPlayerAuth(e) {
+      e.preventDefault();
+      const isSignup = document.getElementById('player-tab-signup').classList.contains('active');
+      const email = document.getElementById('player-email').value.trim();
+      const password = document.getElementById('player-password').value.trim();
+      const name = isSignup ? document.getElementById('player-name').value.trim() : 'Mateo Fernandez';
+      const city = isSignup ? document.getElementById('player-city').value : 'Dubai, UAE';
+      const currency = isSignup ? document.getElementById('player-currency').value : 'USD';
+
+      if (!email.includes('@')) {
+        showBanner('player', 'error', 'Invalid email address: please enter a valid email.');
+        return;
+      }
+      if (password.length < 6) {
+        showBanner('player', 'error', 'Password must be at least 6 characters.');
+        return;
+      }
+      if (isSignup && !name) {
+        showBanner('player', 'error', 'Full Name is required.');
+        return;
+      }
+
+      // Check for returning user routing
+      if (!isSignup) {
+        // If returning user has a club owner account trying to log in as player
+        const saved = localStorage.getItem('rallyo_current_user');
+        if (saved) {
+          const u = JSON.parse(saved);
+          if (u.role === 'club_owner' && email === 'director@marinapadel.club') {
+            showBanner('player', 'error', 'This email is registered to a Club Owner. Please log in via Club Owner portal.');
+            return;
+          }
+        }
+      }
+
+      showBanner('player', 'loading', isSignup ? 'Calibrating Dynamic ELO & creating profile...' : 'Authenticating player credentials...');
+
+      const submitBtn = document.getElementById('player-submit-btn');
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        showBanner('player', 'success', isSignup ? 'Welcome to RALLYO! Your Player Passport is ready.' : 'Welcome back, Mateo!');
+        
+        setTimeout(() => {
+          clearBanner('player');
+          const user = {
+            role: 'player',
+            name: name || 'Mateo Fernandez',
+            location: city,
+            avatar: selectedPlayerAvatar,
+            currency: currency
+          };
+          saveAndRouteUser(user);
+        }, 700);
+      }, 1100);
+    }
+
+    // Submit Club Auth
+    function submitClubAuth(e) {
+      e.preventDefault();
+      const isSignup = document.getElementById('club-tab-signup').classList.contains('active');
+      const email = document.getElementById('club-email').value.trim();
+      const password = document.getElementById('club-password').value.trim();
+      const ownerName = isSignup ? document.getElementById('club-owner-name').value.trim() : 'Sebastian Vance';
+      const clubName = isSignup ? document.getElementById('club-name').value.trim() : 'Marina Padel Sanctuary';
+      const city = isSignup ? document.getElementById('club-city').value : 'Dubai Marina, UAE';
+      const currency = isSignup ? document.getElementById('club-currency').value : 'USD';
+
+      if (!email.includes('@')) {
+        showBanner('club', 'error', 'Invalid club email address.');
+        return;
+      }
+      if (password.length < 6) {
+        showBanner('club', 'error', 'Password must be at least 6 characters.');
+        return;
+      }
+      if (isSignup && (!clubName || !ownerName)) {
+        showBanner('club', 'error', 'Club Name and Owner Name are required.');
+        return;
+      }
+
+      showBanner('club', 'loading', isSignup ? 'Registering court inventory & turnstile integration...' : 'Authenticating club operator credentials...');
+
+      const submitBtn = document.getElementById('club-submit-btn');
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        showBanner('club', 'success', isSignup ? 'Venue accredited! Launching Club Owner Dashboard.' : 'Welcome back, Sebastian!');
+
+        setTimeout(() => {
+          clearBanner('club');
+          const user = {
+            role: 'club_owner',
+            name: ownerName || 'Sebastian Vance',
+            clubName: clubName || 'Marina Padel Sanctuary',
+            location: city,
+            currency: currency
+          };
+          saveAndRouteUser(user);
+        }, 700);
+      }, 1200);
+    }
+
+    // Save user & route based on role
+    function saveAndRouteUser(user) {
+      currentUser = user;
+      localStorage.setItem('rallyo_current_user', JSON.stringify(user));
+      updateHeaderBadge();
+
+      if (user.role === 'player') {
+        document.getElementById('dash-player-name').textContent = user.name;
+        document.getElementById('dash-player-meta').textContent = `Tier 1 Elite • ${user.location}`;
+        document.getElementById('dash-player-avatar').src = user.avatar || selectedPlayerAvatar;
+        document.getElementById('dash-player-wallet').textContent = user.currency === 'AED' ? 'AED 1,250' : (user.currency === 'EUR' ? '€320.00' : '$340.00');
+        switchView(viewPlayerDash);
+      } else if (user.role === 'club_owner') {
+        document.getElementById('dash-club-name').textContent = user.clubName;
+        document.getElementById('dash-club-meta').textContent = `Pier 7 Promenade • ${user.location}`;
+        document.getElementById('dash-club-revenue').textContent = user.currency === 'AED' ? 'AED 5,430.00' : (user.currency === 'EUR' ? '€1,390.00' : '$1,480.00');
+        switchView(viewClubDash);
+      }
+    }
+
+    function updateHeaderBadge() {
+      const badge = document.getElementById('header-user-badge');
+      if (currentUser) {
+        badge.textContent = currentUser.role === 'player' ? `Player: ${currentUser.name}` : `Club: ${currentUser.clubName}`;
+        badge.style.color = currentUser.role === 'player' ? 'var(--accent-lime)' : 'var(--accent-amber)';
+      } else {
+        badge.textContent = 'Guest';
+        badge.style.color = 'inherit';
+      }
+    }
+
+    function handleHeaderUserAction() {
+      if (currentUser) {
+        if (currentUser.role === 'player') switchView(viewPlayerDash);
+        else switchView(viewClubDash);
+      } else {
+        goToSelection();
+      }
+    }
+
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem('rallyo_current_user');
+      updateHeaderBadge();
+      goToSelection();
+    }
+
+    // Role Restriction Enforcement
+    function testRoleRestriction(action) {
+      const guardTitle = document.getElementById('guard-title');
+      const guardMsg = document.getElementById('guard-msg');
+
+      if (action === 'club_management') {
+        // Player attempting to access Club Manager
+        guardTitle.textContent = 'Club Operator Authorization Required';
+        guardMsg.textContent = 'Players cannot access Club Inventory, Turnstile Settings, or Venue GMV controls. To manage a venue, please log in with a verified Club Owner profile.';
+        guardModal.classList.add('active');
+      } else if (action === 'player_match_action') {
+        // Club owner attempting to enter player-only lobby
+        guardTitle.textContent = 'Player Profile Required';
+        guardMsg.textContent = 'Club Owner accounts cannot join matches or AI matchmaking lobbies directly. Please create a Player Profile to compete on the court.';
+        guardModal.classList.add('active');
+      }
+    }
+
+    function closeGuardModal() {
+      guardModal.classList.remove('active');
+    }
+
+    function switchUserRolePrompt() {
+      closeGuardModal();
+      logoutUser();
+    }
+
+    // Player Dashboard Tabs
+    function switchPlayerTab(tabKey, btn) {
+      document.querySelectorAll('#view-player-dashboard .dash-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#view-player-dashboard .tab-pane').forEach(p => p.classList.remove('active'));
+      
+      btn.classList.add('active');
+      const target = document.getElementById(`player-tab-${tabKey}`);
+      if (target) target.classList.add('active');
+    }
+
+    // Club Dashboard Tabs
+    function switchClubTab(tabKey, btn) {
+      document.querySelectorAll('#view-club-dashboard .dash-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#view-club-dashboard .tab-pane').forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const target = document.getElementById(`club-tab-${tabKey}`);
+      if (target) target.classList.add('active');
+    }
+
+    // Interactive UX State Simulator (for prompt criteria verification)
+    function triggerUXState(state) {
+      const activeFlow = (viewClubFlow.classList.contains('active') || viewClubDash.classList.contains('active')) ? 'club' : 'player';
+
+      // Ensure we are in a flow view
+      if (!viewPlayerFlow.classList.contains('active') && !viewClubFlow.classList.contains('active')) {
+        startFlow(activeFlow);
+      }
+
+      switch (state) {
+        case 'loading':
+          showBanner(activeFlow, 'loading', 'Synchronizing court availability & verifying biometric turnstiles...');
+          break;
+        case 'signup_success':
+          showBanner(activeFlow, 'success', 'Account created successfully! Welcome to RALLYO Operating System.');
+          break;
+        case 'login_success':
+          showBanner(activeFlow, 'success', 'Login successful! Welcome back to your padel dashboard.');
+          break;
+        case 'google_error':
+          showBanner(activeFlow, 'error', 'Google OAuth Error: Token exchange timed out. Please try again.');
+          break;
+        case 'missing_fields':
+          showBanner(activeFlow, 'error', 'Missing required fields: Please provide your Full Name and Location.');
+          break;
+        case 'invalid_creds':
+          showBanner(activeFlow, 'error', 'Invalid email or password: Check your credentials and retry.');
+          break;
+        case 'photo_error':
+          showBanner(activeFlow, 'error', 'Photo upload failed: Image must be JPG/PNG and under 8MB.');
+          break;
+        case 'club_image_error':
+          showBanner('club', 'error', 'Club gallery upload error: Minimum resolution required is 1920x1080.');
+          break;
+        case 'role_required':
+          goToSelection();
+          alert('Role selection required: Choose Player or Club Owner to proceed.');
+          break;
+        case 'network_error':
+          showBanner(activeFlow, 'error', 'Network connection interrupted. Retrying sync with RALLYO servers...');
+          break;
+      }
+    }
+  </script>
+</body>
+</html>

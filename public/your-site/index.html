@@ -1,0 +1,3802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RALLYO — Find Your Rally</title>
+  <meta name="description" content="Cinematic luxury padel app experience. Find your match, book premier courts, and play with relentless momentum.">
+
+  <!-- Typography: Cormorant Garamond, Fraunces, Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- GSAP & Lenis CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+
+  <style>
+    /* -------------------------------------------------------------
+       CSS RESET & DESIGN TOKENS
+       Background: #0a0506 (near-black burgundy)
+       Text: #f5ece6 (warm ivory)
+       Accent: #c9a675 (rose gold)
+       Secondary Accent: #7a1128 (deep rose)
+    -------------------------------------------------------------- */
+    :root {
+      --bg-color: #0a0506;
+      --bg-elevated: #12090c;
+      --bg-card: rgba(22, 11, 15, 0.72);
+      --text-color: #f5ece6;
+      --text-muted: rgba(245, 236, 230, 0.72);
+      --text-dim: rgba(245, 236, 230, 0.45);
+      --accent: #c9a675;
+      --accent-light: #dfbc89;
+      --accent-glow: rgba(201, 166, 117, 0.28);
+      --rose: #7a1128;
+      --rose-glow: rgba(122, 17, 40, 0.38);
+      --border-subtle: rgba(201, 166, 117, 0.18);
+      --border-focus: rgba(201, 166, 117, 0.55);
+      --font-display: 'Fraunces', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-editorial: 'Cormorant Garamond', 'Fraunces', serif;
+      --font-modern: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      --gold-gradient: linear-gradient(135deg, #dfbc89 0%, #c9a675 50%, #9a723d 100%);
+      --glass-surface: rgba(22, 11, 15, 0.68);
+      --glass-border: rgba(201, 166, 117, 0.22);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-sans);
+      overflow-x: clip; /* Critical: NOT overflow-x: hidden to preserve sticky position */
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      selection-background-color: var(--accent);
+      selection-color: var(--bg-color);
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--bg-color);
+    }
+
+    /* Fixed Progress Bar (2px wide, right edge, grows 0 to 100vh) */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 0vh;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      z-index: 999;
+      pointer-events: none;
+      transition: height 0.05s linear;
+    }
+
+    /* Fixed Navigation */
+    .fixed-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.2rem 3.5rem;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .nav-brand {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 5px;
+      font-weight: 600;
+      color: var(--text-color);
+      text-decoration: none;
+      pointer-events: auto;
+      text-transform: uppercase;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+    }
+
+    .nav-brand:hover {
+      color: var(--accent);
+      letter-spacing: 6px;
+    }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 5px;
+      font-weight: 600;
+      color: var(--text-color);
+      text-decoration: none;
+      text-transform: uppercase;
+      pointer-events: auto;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      background: rgba(10, 5, 6, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-cta:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 1: HERO SCROLL SEQUENCE (CANVAS)
+    -------------------------------------------------------------- */
+    .hero-container {
+      position: relative;
+      width: 100%;
+      height: 500vh; /* Scroll track for 373 frames */
+      background-color: var(--bg-color);
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /* Fallback Video / Poster layer */
+    .hero-fallback-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Dark vignette over canvas for cinema depth */
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(10, 5, 6, 0.1) 20%, rgba(10, 5, 6, 0.75) 90%),
+                  linear-gradient(to bottom, rgba(10, 5, 6, 0.6) 0%, transparent 20%, transparent 80%, rgba(10, 5, 6, 0.9) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Hero Text Overlays */
+    .hero-overlay-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .overlay-text {
+      position: absolute;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+      will-change: opacity, transform;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Range 0.05-0.15: RALLYO 110px Fraunces italic */
+    #overlay-phase-1 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(64px, 9vw, 110px);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text-color);
+      letter-spacing: -1px;
+    }
+
+    /* Range 0.20-0.30: Find Your Rally. 26px Inter light italic */
+    #overlay-phase-2 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: clamp(20px, 2.5vw, 26px);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-color);
+      letter-spacing: 1px;
+    }
+
+    /* Range 0.40-0.50: Players become matches. 60px Fraunces */
+    #overlay-phase-3 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5vw, 60px);
+      font-weight: 400;
+      color: var(--text-color);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+    }
+
+    /* Range 0.60-0.70: Matches become momentum. 60px Fraunces */
+    #overlay-phase-4 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5vw, 60px);
+      font-weight: 400;
+      color: var(--text-color);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+    }
+
+    /* Range 0.80-0.90: One app. Every rally. 12px Inter uppercase letter-spacing 4px top 10% left 8% */
+    #overlay-phase-5 {
+      top: 10%;
+      left: 8%;
+      text-align: left;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      font-weight: 600;
+      color: var(--text-color);
+      border-left: 2px solid var(--accent);
+      padding-left: 1.2rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 0.5s ease;
+    }
+
+    .scroll-hint span {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .scroll-indicator-line {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: pulseScroll 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseScroll {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      50.1% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 2: STICKY RALLY-TO-APP EXPLAINER (EDITORIAL LOOKBOOK)
+       Left 50%: sticky 100vh lookbook frame with corner crosshairs & HUD
+       Right 50%: 4x 100vh editorial panels with watermark numerals
+    -------------------------------------------------------------- */
+    .explainer-section {
+      position: relative;
+      display: flex;
+      width: 100%;
+      background: var(--bg-color);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .explainer-left {
+      width: 50%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #080305;
+      padding: 3rem;
+    }
+
+    .explainer-frame-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(122, 17, 40, 0.25);
+      border: 1px solid rgba(201, 166, 117, 0.22);
+    }
+
+    .explainer-image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .explainer-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(1.08);
+      filter: contrast(1.08) brightness(0.92);
+    }
+
+    .explainer-img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .explainer-left-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 35%, rgba(10,5,6,0.65) 90%),
+                  linear-gradient(to bottom, rgba(10,5,6,0.5) 0%, transparent 20%, transparent 80%, rgba(10,5,6,0.7) 100%);
+      pointer-events: none;
+    }
+
+    /* Editorial Corner Brackets on Sticky Image */
+    .frame-corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      z-index: 5;
+      pointer-events: none;
+      border-color: var(--accent);
+    }
+
+    .frame-corner-tl { top: 1.2rem; left: 1.2rem; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+    .frame-corner-tr { top: 1.2rem; right: 1.2rem; border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+    .frame-corner-bl { bottom: 1.2rem; left: 1.2rem; border-bottom: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+    .frame-corner-br { bottom: 1.2rem; right: 1.2rem; border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+
+    /* Sticky Frame Telemetry HUD */
+    .frame-hud-top {
+      position: absolute;
+      top: 1.2rem;
+      left: 2.8rem;
+      right: 2.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+      font-family: var(--font-modern);
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      pointer-events: none;
+    }
+
+    .frame-hud-bottom {
+      position: absolute;
+      bottom: 1.2rem;
+      left: 2.8rem;
+      right: 2.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+      font-family: var(--font-modern);
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .explainer-phase-indicator {
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 2px;
+      border: 1px solid var(--border-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(10,5,6,0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .explainer-right {
+      width: 50%;
+      position: relative;
+    }
+
+    .explainer-panel {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 6rem 5rem 5rem;
+      border-bottom: 1px solid rgba(201, 166, 117, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Giant Translucent Roman Numeral Background Watermark */
+    .panel-watermark {
+      position: absolute;
+      top: 50%;
+      right: 2.5rem;
+      transform: translateY(-50%);
+      font-family: var(--font-editorial);
+      font-size: clamp(140px, 18vw, 240px);
+      color: rgba(201, 166, 117, 0.09);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+
+    .panel-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-tag {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1.4rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .panel-tag::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .panel-title {
+      font-family: var(--font-editorial);
+      font-size: clamp(40px, 4.8vw, 68px);
+      font-weight: 300;
+      line-height: 1.08;
+      margin-bottom: 1.6rem;
+      color: var(--text-color);
+      letter-spacing: -0.5px;
+    }
+
+    .panel-title span {
+      font-style: italic;
+      color: var(--accent-light);
+      font-weight: 400;
+    }
+
+    .panel-title em {
+      display: block;
+      font-family: var(--font-modern);
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 500;
+      margin-top: 0.6rem;
+    }
+
+    .panel-copy {
+      font-family: var(--font-modern);
+      font-size: clamp(15px, 1.25vw, 18px);
+      line-height: 1.85;
+      color: var(--text-muted);
+      max-width: 520px;
+      font-weight: 300;
+      margin-bottom: 2.2rem;
+    }
+
+    .panel-telemetry-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid rgba(201, 166, 117, 0.14);
+    }
+
+    .telemetry-tag {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .telemetry-tag::before {
+      content: '•';
+      color: var(--rose);
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 3: HORIZONTAL CRAFTSMANSHIP RAIL (EXHIBITION RUNWAY)
+       GSAP Pinned, smooth horizontal scroll, 4 panels with videos
+    -------------------------------------------------------------- */
+    .rail-section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-elevated);
+    }
+
+    .rail-top-bar {
+      position: absolute;
+      top: 5rem;
+      left: 3.5rem;
+      right: 3.5rem;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid rgba(201, 166, 117, 0.15);
+      padding-bottom: 1rem;
+    }
+
+    .rail-track {
+      display: flex;
+      height: 100%;
+      width: 400vw; /* 4 panels */
+      will-change: transform;
+    }
+
+    .rail-panel {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      padding: 6rem 6rem;
+    }
+
+    .rail-video-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      filter: brightness(0.62) contrast(1.15) saturate(1.1);
+    }
+
+    .rail-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10,5,6,0.4) 0%, rgba(10,5,6,0.88) 100%),
+                  radial-gradient(circle at 80% 25%, var(--rose-glow) 0%, transparent 65%);
+      z-index: 2;
+    }
+
+    .rail-content {
+      position: relative;
+      z-index: 3;
+      max-width: 720px;
+    }
+
+    .rail-step-num {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .rail-step-num::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .rail-heading {
+      font-family: var(--font-editorial);
+      font-size: clamp(38px, 4.6vw, 64px);
+      font-weight: 300;
+      color: var(--text-color);
+      line-height: 1.1;
+      margin-bottom: 1.4rem;
+      letter-spacing: -0.5px;
+    }
+
+    .rail-heading em {
+      font-style: italic;
+      color: var(--accent-light);
+      font-weight: 400;
+    }
+
+    .rail-desc {
+      font-family: var(--font-modern);
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      font-weight: 300;
+      margin-bottom: 1.8rem;
+    }
+
+    .rail-specs-bar {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .rail-spec-pill {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      background: rgba(10, 5, 6, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 4: PARALLAX STATEMENT (THE MANIFESTO)
+       Full bleed background with images/rallyo-07-app-takes-shape.jpeg
+       Slow parallax yPercent: 20
+    -------------------------------------------------------------- */
+    .parallax-section {
+      position: relative;
+      width: 100%;
+      min-height: 115vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 3rem;
+      background: var(--bg-color);
+    }
+
+    .parallax-bg-wrapper {
+      position: absolute;
+      top: -25%;
+      left: 0;
+      width: 100%;
+      height: 150%;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .parallax-bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.18) contrast(1.15);
+      opacity: 0.4;
+    }
+
+    .parallax-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(10,5,6,0.5) 0%, rgba(10,5,6,0.96) 85%),
+                  linear-gradient(to bottom, rgba(10,5,6,0.85) 0%, transparent 35%, transparent 70%, rgba(10,5,6,0.95) 100%);
+      z-index: 2;
+    }
+
+    .parallax-content {
+      position: relative;
+      z-index: 3;
+      max-width: 1020px;
+    }
+
+    .statement-tag {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 2.2rem;
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      background: rgba(10,5,6,0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    .statement-title {
+      font-family: var(--font-editorial);
+      font-size: clamp(40px, 6vw, 84px);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--text-color);
+      margin-bottom: 2.4rem;
+      letter-spacing: -0.5px;
+    }
+
+    .statement-title span {
+      color: var(--accent-light);
+      font-style: normal;
+    }
+
+    .statement-sub {
+      font-family: var(--font-modern);
+      font-size: 12px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+    }
+
+    .statement-sub::before, .statement-sub::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 5: REVERSE COLUMNS (THE ARCHITECTURAL LOOKBOOK)
+       3-column layout with alternating vertical parallax
+       col-up (yPercent: -20), col-down (yPercent: +20)
+    -------------------------------------------------------------- */
+    .reverse-columns-section {
+      position: relative;
+      padding: 6.5rem 4rem 8.5rem 4rem;
+      background: var(--bg-color);
+      overflow: hidden;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .reverse-header {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto 4rem auto;
+    }
+
+    .reverse-header .eyebrow {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .reverse-header h2 {
+      font-family: var(--font-editorial);
+      font-size: clamp(38px, 4.8vw, 62px);
+      font-weight: 300;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+
+    .reverse-header h2 span {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .reverse-header p {
+      font-family: var(--font-modern);
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .columns-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .col-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: border-color 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+      will-change: transform;
+    }
+
+    .col-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-8px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px var(--accent-glow);
+    }
+
+    .col-media {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+    }
+
+    .col-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .col-card:hover .col-media img {
+      transform: scale(1.08);
+    }
+
+    .col-media-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,5,6,0.8) 0%, transparent 40%);
+    }
+
+    .col-info {
+      padding: 2.4rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+    }
+
+    .col-badge {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .col-title {
+      font-family: var(--font-editorial);
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-color);
+      margin-bottom: 0.8rem;
+    }
+
+    .col-desc {
+      font-family: var(--font-modern);
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-bottom: 1.6rem;
+    }
+
+    .col-footer-spec {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(201, 166, 117, 0.12);
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 6: FINAL LOOK GRID (THE TRIUMVIRATE COLLECTION)
+       3 cards: THE APP, THE PLAYER, THE RALLY
+    -------------------------------------------------------------- */
+    .final-grid-section {
+      padding: 6.5rem 4rem 8.5rem 4rem;
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .final-grid-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 3.5rem auto;
+    }
+
+    .final-grid-header .eyebrow {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .final-grid-header h2 {
+      font-family: var(--font-editorial);
+      font-size: clamp(38px, 4.6vw, 60px);
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+
+    .final-grid-header h2 span {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .final-grid-header p {
+      font-family: var(--font-modern);
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .tri-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.8rem;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .tri-card {
+      position: relative;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tri-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px var(--accent-glow);
+      transform: translateY(-8px);
+    }
+
+    .tri-image-box {
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tri-image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tri-card:hover .tri-image-box img {
+      transform: scale(1.08);
+    }
+
+    .tri-serial-tag {
+      position: absolute;
+      top: 1.4rem;
+      left: 1.4rem;
+      z-index: 2;
+      background: rgba(10, 5, 6, 0.75);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .tri-content {
+      padding: 2.6rem;
+      border-top: 1px solid rgba(201, 166, 117, 0.12);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .tri-card-header {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .tri-card-name {
+      font-family: var(--font-editorial);
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+    }
+
+    .tri-card-desc {
+      font-family: var(--font-modern);
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .tri-cta-link {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .tri-cta-link:hover {
+      color: var(--accent-light);
+      gap: 1rem;
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 7: NEWSLETTER (THE INVITATIONAL SYNDICATE)
+       Full-bleed background with images/rallyo-08-find-your-rally-moment.jpeg
+       Dark overlay, centered email capture
+    -------------------------------------------------------------- */
+    .newsletter-section {
+      position: relative;
+      width: 100%;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.28) saturate(1.3);
+    }
+
+    .newsletter-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(10,5,6,0.65) 0%, rgba(10,5,6,0.96) 88%),
+                  linear-gradient(to bottom, rgba(10,5,6,0.85) 0%, transparent 40%, rgba(10,5,6,0.98) 100%);
+    }
+
+    .newsletter-card {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      padding: 5rem 4rem;
+      background: rgba(18, 9, 13, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 30px var(--accent-glow);
+    }
+
+    .newsletter-tag {
+      font-family: var(--font-modern);
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1.4rem;
+      display: inline-block;
+    }
+
+    .newsletter-title {
+      font-family: var(--font-editorial);
+      font-size: clamp(36px, 4.6vw, 56px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-color);
+      line-height: 1.15;
+      margin-bottom: 1.4rem;
+    }
+
+    .newsletter-subtitle {
+      font-family: var(--font-modern);
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.8rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      padding: 1.2rem 1.6rem;
+      background: rgba(10, 5, 6, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      font-family: var(--font-modern);
+      font-size: 14px;
+      color: var(--text-color);
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .newsletter-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .newsletter-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .newsletter-btn {
+      padding: 1.2rem 2.2rem;
+      background: var(--accent);
+      color: #0a0506;
+      border: none;
+      border-radius: 2px;
+      font-family: var(--font-modern);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      white-space: nowrap;
+    }
+
+    .newsletter-btn:hover {
+      background: var(--accent-light);
+      box-shadow: 0 0 30px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    /* -------------------------------------------------------------
+       SECTION 8: FOOTER (HAUTE PADEL ATELIER)
+       Minimal near-black footer with RALLYO branding & copyright
+    -------------------------------------------------------------- */
+    .site-footer {
+      position: relative;
+      background: var(--bg-color);
+      border-top: 1px solid rgba(201, 166, 117, 0.15);
+      padding: 6rem 4rem 4rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 3rem;
+    }
+
+    .footer-brand-column {
+      max-width: 320px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-editorial);
+      font-size: 38px;
+      font-style: italic;
+      color: var(--text-color);
+      letter-spacing: 2px;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-cities-line {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .footer-links-grid {
+      display: flex;
+      gap: 4.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-nav-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-modern);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-link {
+      font-family: var(--font-modern);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 300;
+    }
+
+    .footer-link:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 2.4rem;
+      font-family: var(--font-modern);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* -------------------------------------------------------------
+       MEMBERSHIP PORTAL & ONBOARDING SYSTEM STYLES
+    -------------------------------------------------------------- */
+    .membership-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 5, 6, 0.94);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      z-index: 2000;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      padding: 2.5rem 1.5rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .membership-modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .membership-modal-container {
+      width: 100%;
+      max-width: 1040px;
+      background: rgba(20, 11, 14, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 40px var(--accent-glow);
+      position: relative;
+      margin: auto;
+      overflow: hidden;
+      animation: modalSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(24px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1.8rem;
+      right: 1.8rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 5, 6, 0.6);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: rotate(90deg);
+    }
+
+    .modal-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .modal-back-btn:hover {
+      color: var(--accent);
+    }
+
+    .membership-view {
+      display: none;
+      padding: 3.5rem 3.5rem;
+    }
+
+    .membership-view.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .membership-header {
+      text-align: center;
+      margin-bottom: 3.2rem;
+    }
+
+    .membership-badge {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .membership-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.8vw, 48px);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+
+    .membership-title span {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .membership-tagline {
+      font-size: 15px;
+      color: var(--accent);
+      font-style: italic;
+      letter-spacing: 1px;
+      margin-bottom: 0.6rem;
+    }
+
+    .membership-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 550px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* Cards Grid for Membership Choice */
+    .membership-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .membership-card {
+      background: rgba(10, 5, 6, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 2.8rem 2.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .membership-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 20%, var(--rose-glow) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .membership-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow);
+    }
+
+    .membership-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-role-tag {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text-color);
+      margin-bottom: 0.8rem;
+    }
+
+    .card-tagline {
+      font-style: italic;
+      color: var(--accent);
+      font-size: 14px;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .card-features-list {
+      list-style: none;
+      margin-bottom: 2.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .card-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 13px;
+      color: var(--text-color);
+    }
+
+    .card-feature-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .card-btn {
+      width: 100%;
+      padding: 1.1rem 1.6rem;
+      border-radius: 4px;
+      border: 1px solid var(--accent);
+      background: rgba(201, 166, 117, 0.08);
+      color: var(--accent);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.35s ease;
+    }
+
+    .membership-card:hover .card-btn {
+      background: var(--accent);
+      color: #0a0506;
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+
+    /* Auth Forms (Player & Club Owner) */
+    .auth-box {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .auth-mode-switch {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .auth-tab-btn {
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 5, 6, 0.4);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .auth-tab-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(201, 166, 117, 0.12);
+    }
+
+    .google-btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-color);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1.8rem;
+    }
+
+    .google-btn:hover {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(201, 166, 117, 0.15);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      padding: 0.9rem 1.1rem;
+      background: rgba(10, 5, 6, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      color: var(--text-color);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    .form-select {
+      cursor: pointer;
+    }
+
+    .form-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .chip-item {
+      padding: 0.45rem 0.9rem;
+      background: rgba(20, 11, 14, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .chip-item.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(201, 166, 117, 0.15);
+    }
+
+    /* Avatar Upload Preview */
+    .avatar-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .avatar-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      object-fit: cover;
+      background: #140b0e;
+    }
+
+    .avatar-presets {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .preset-avatar-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      padding: 0;
+      background: none;
+    }
+
+    .preset-avatar-btn:hover, .preset-avatar-btn.active {
+      border-color: var(--accent);
+      transform: scale(1.1);
+    }
+
+    .preset-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Submit Button & States */
+    .auth-submit-btn {
+      width: 100%;
+      padding: 1.2rem;
+      background: var(--accent);
+      color: #0a0506;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transition: all 0.35s ease;
+      margin-top: 1rem;
+    }
+
+    .auth-submit-btn:hover {
+      background: #dfbc89;
+      box-shadow: 0 0 30px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    .state-banner {
+      padding: 1rem 1.4rem;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-bottom: 1.4rem;
+      display: none;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .state-banner.error {
+      background: rgba(122, 17, 40, 0.4);
+      border: 1px solid #e63946;
+      color: #ffb4a2;
+      display: flex;
+    }
+
+    .state-banner.success {
+      background: rgba(40, 167, 69, 0.2);
+      border: 1px solid #2ec4b6;
+      color: #cbf3f0;
+      display: flex;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(10, 5, 6, 0.3);
+      border-top-color: #0a0506;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Dashboard Views */
+    .dashboard-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .dashboard-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .dash-user-identity {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .dash-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      object-fit: cover;
+    }
+
+    .dash-user-meta h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .dash-user-meta p {
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .dash-actions-row {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .dash-action-btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 5, 6, 0.4);
+      color: var(--text-color);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dash-action-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .dash-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+    }
+
+    .dash-metric-card {
+      background: rgba(10, 5, 6, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1.5rem;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .qr-pass-card {
+      background: linear-gradient(135deg, rgba(20, 11, 14, 0.9) 0%, rgba(122, 17, 40, 0.25) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .qr-code-box {
+      background: #fff;
+      padding: 12px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+
+    .qr-code-box svg {
+      width: 90px;
+      height: 90px;
+    }
+
+    /* Court Live Grid */
+    .court-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+
+    .court-slot-card {
+      background: rgba(10, 5, 6, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .court-slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .court-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .court-status-pill {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .court-status-pill.booked {
+      background: rgba(122, 17, 40, 0.5);
+      color: #ffccd5;
+      border: 1px solid #7a1128;
+    }
+
+    .court-status-pill.available {
+      background: rgba(46, 196, 182, 0.2);
+      color: #2ec4b6;
+      border: 1px solid #2ec4b6;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .explainer-section {
+        flex-direction: column;
+      }
+      .explainer-left {
+        width: 100%;
+        height: 60vh;
+        position: relative;
+      }
+      .explainer-right {
+        width: 100%;
+      }
+      .explainer-panel {
+        height: auto;
+        min-height: 60vh;
+        padding: 4rem 2rem;
+      }
+      .columns-container, .tri-grid, .membership-cards-grid, .form-grid, .dash-metrics-grid, .court-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+      .fixed-nav {
+        padding: 1.5rem 2rem;
+      }
+      .rail-panel {
+        padding: 3rem 2rem;
+      }
+      .newsletter-form {
+        flex-direction: column;
+      }
+      .membership-view {
+        padding: 2.5rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Rose gold scroll progress bar (2px wide, right edge) -->
+  <div id="progress-bar"></div>
+
+  <!-- Fixed Navigation: RALLYO top-left, JOIN NOW top-right -->
+  <header class="fixed-nav">
+    <a href="#" class="nav-brand">RALLYO</a>
+    <button class="nav-cta" id="nav-join-btn" onclick="openMembershipModal()">JOIN NOW</button>
+  </header>
+
+  <!-- =============================================================
+       1. HERO SECTION: CANVAS IMAGE SEQUENCE (373 FRAMES)
+  ============================================================== -->
+  <section class="hero-container" id="hero-track">
+    <div class="hero-sticky">
+      <!-- Fallback / Poster Video -->
+      <video class="hero-fallback-video" id="hero-fallback" muted playsinline preload="auto">
+        <source src="rallyo-story.mp4" type="video/mp4">
+      </video>
+
+      <!-- Frame sequence canvas -->
+      <canvas class="hero-canvas" id="hero-canvas"></canvas>
+
+      <!-- Cinematic Vignette Overlay -->
+      <div class="hero-vignette"></div>
+
+      <!-- Timed Text Overlays -->
+      <div class="hero-overlay-layer">
+        <!-- Progress 0.05-0.15: RALLYO 110px Fraunces italic centered -->
+        <div class="overlay-text" id="overlay-phase-1">RALLYO</div>
+
+        <!-- Progress 0.20-0.30: Find Your Rally. 26px Inter light italic centered -->
+        <div class="overlay-text" id="overlay-phase-2">Find Your Rally.</div>
+
+        <!-- Progress 0.40-0.50: Players become matches. 60px Fraunces centered -->
+        <div class="overlay-text" id="overlay-phase-3">Players become matches.</div>
+
+        <!-- Progress 0.60-0.70: Matches become momentum. 60px Fraunces centered -->
+        <div class="overlay-text" id="overlay-phase-4">Matches become momentum.</div>
+
+        <!-- Progress 0.80-0.90: One app. Every rally. 12px Inter uppercase top 10% left 8% -->
+        <div class="overlay-text" id="overlay-phase-5">One app. Every rally.</div>
+      </div>
+
+      <!-- Subtle scroll prompt indicator -->
+      <div class="scroll-hint" id="scroll-hint">
+        <span>SCROLL TO AWAKEN</span>
+        <div class="scroll-indicator-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       2. STICKY RALLY-TO-APP EXPLAINER (LOOKBOOK ARCHIVE)
+       Left 50%: sticky 100vh lookbook frame with telemetry HUD
+       Right 50%: 4x 100vh editorial panels with Roman numeral watermarks
+  ============================================================== -->
+  <section class="explainer-section" id="explainer">
+    <div class="explainer-left">
+      <div class="explainer-frame-wrapper">
+        <!-- Luxury Lookbook Corner Brackets -->
+        <span class="frame-corner frame-corner-tl"></span>
+        <span class="frame-corner frame-corner-tr"></span>
+        <span class="frame-corner frame-corner-bl"></span>
+        <span class="frame-corner frame-corner-br"></span>
+
+        <!-- Top Telemetry HUD -->
+        <div class="frame-hud-top">
+          <span>RALLYO ARCHIVE // MONOLITHIC GLASS</span>
+          <span>SERIES 2026</span>
+        </div>
+
+        <!-- Bottom Telemetry HUD -->
+        <div class="frame-hud-bottom">
+          <span>COORDINATES: 25.0805° N, 55.1403° E</span>
+          <span class="explainer-phase-indicator" id="explainer-phase-hud">PHASE 01 : THE RALLY</span>
+        </div>
+
+        <div class="explainer-image-container">
+          <!-- Start with rallyo-01-court-spark.jpeg -->
+          <img src="images/rallyo-01-court-spark.jpeg" alt="The Rally" class="explainer-img active" id="explainer-img-0">
+          <!-- Swap to rallyo-05-match-locks-in.jpeg -->
+          <img src="images/rallyo-05-match-locks-in.jpeg" alt="The Match" class="explainer-img" id="explainer-img-1">
+          <!-- Swap to rallyo-06-booking-world-emerges.jpeg -->
+          <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="The Booking" class="explainer-img" id="explainer-img-2">
+          <!-- Swap to rallyo-07-app-takes-shape.jpeg -->
+          <img src="images/rallyo-07-app-takes-shape.jpeg" alt="The App" class="explainer-img" id="explainer-img-3">
+        </div>
+        <div class="explainer-left-overlay"></div>
+      </div>
+    </div>
+
+    <div class="explainer-right">
+      <!-- Panel 1: THE RALLY -->
+      <article class="explainer-panel" data-panel-index="0">
+        <div class="panel-watermark">I</div>
+        <div class="panel-content">
+          <span class="panel-tag">Phase I</span>
+          <h2 class="panel-title">THE <span>RALLY</span><em>The Pure Catalyst</em></h2>
+          <p class="panel-copy">
+            A solitary glass arena illuminated under nocturnal floodlights. The geometric precision of padel awakens — where speed meets acoustic tension and every millimeter holds the electric possibility of match point.
+          </p>
+          <div class="panel-telemetry-row">
+            <span class="telemetry-tag">10M x 20M Tempered Glass</span>
+            <span class="telemetry-tag">Acoustic Carbon Shock</span>
+            <span class="telemetry-tag">Zero Latency Pairing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Panel 2: THE MATCH -->
+      <article class="explainer-panel" data-panel-index="1">
+        <div class="panel-watermark">II</div>
+        <div class="panel-content">
+          <span class="panel-tag">Phase II</span>
+          <h2 class="panel-title">THE <span>MATCH</span><em>Dynamic Equilibrium</em></h2>
+          <p class="panel-copy">
+            Four sovereign competitors converge. Our proprietary rating matrix synthesizes pace, court IQ, and competitive drive to forge an exquisite doubles chemistry that honors your dedication.
+          </p>
+          <div class="panel-telemetry-row">
+            <span class="telemetry-tag">ELO-Calibrated Doubles</span>
+            <span class="telemetry-tag">Verified Level 4.5+</span>
+            <span class="telemetry-tag">Instant Syndicate Match</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Panel 3: THE BOOKING -->
+      <article class="explainer-panel" data-panel-index="2">
+        <div class="panel-watermark">III</div>
+        <div class="panel-content">
+          <span class="panel-tag">Phase III</span>
+          <h2 class="panel-title">THE <span>BOOKING</span><em>Private Sanctuary Access</em></h2>
+          <p class="panel-copy">
+            From rooftop terraces in Madrid to private waterfront compounds in Dubai. Secure championship glass courts across premier sanctuaries in one continuous, seamless tactile gesture.
+          </p>
+          <div class="panel-telemetry-row">
+            <span class="telemetry-tag">Digital QR Gate Credentials</span>
+            <span class="telemetry-tag">Multi-Currency Settlement</span>
+            <span class="telemetry-tag">VIP Concierge Escrow</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Panel 4: THE APP -->
+      <article class="explainer-panel" data-panel-index="3">
+        <div class="panel-watermark">IV</div>
+        <div class="panel-content">
+          <span class="panel-tag">Phase IV</span>
+          <h2 class="panel-title">THE <span>APP</span><em>Couture Operating System</em></h2>
+          <p class="panel-copy">
+            One effortless motion from desire to match point. The total padel lifestyle elevated into haute technology — tracking your trajectory, your private records, and your court prestige across the globe.
+          </p>
+          <div class="panel-telemetry-row">
+            <span class="telemetry-tag">Tactile Glass UI</span>
+            <span class="telemetry-tag">Global Tour Circuit</span>
+            <span class="telemetry-tag">Bespoke Club Portals</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       3. HORIZONTAL CRAFTSMANSHIP RAIL (RUNWAY EXHIBITION)
+       GSAP pinned horizontal scroll with 4 video clips & luxury specs
+  ============================================================== -->
+  <section class="rail-section" id="rail-wrapper">
+    <!-- Luxury Top Exhibition Bar -->
+    <div class="rail-top-bar">
+      <span>RALLYO ARCHIVE // RUNWAY EXHIBITION</span>
+      <span>HORIZON SCROLL // CHAPTERS 01 — 04</span>
+    </div>
+
+    <div class="rail-track" id="rail-track">
+      <!-- Rail Panel 1 -->
+      <div class="rail-panel">
+        <video class="rail-video-bg" autoplay muted loop playsinline preload="metadata">
+          <source src="videos/rallyo-v03-rally-motion-to-player-network.mp4" type="video/mp4">
+        </video>
+        <div class="rail-overlay"></div>
+        <div class="rail-content">
+          <span class="rail-step-num">Chapter 01</span>
+          <h3 class="rail-heading">Kinetic <em>Resonance</em></h3>
+          <p class="rail-desc">
+            Translating pure court velocity into an intelligent player grid. Every shot reverberates across the network to connect you with rivals of immaculate technique.
+          </p>
+          <div class="rail-specs-bar">
+            <span class="rail-spec-pill">Court Vision AI</span>
+            <span class="rail-spec-pill">Synchronous Grid</span>
+            <span class="rail-spec-pill">Biometric Cadence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rail Panel 2 -->
+      <div class="rail-panel">
+        <video class="rail-video-bg" autoplay muted loop playsinline preload="metadata">
+          <source src="videos/rallyo-v04-player-network-to-match-found.mp4" type="video/mp4">
+        </video>
+        <div class="rail-overlay"></div>
+        <div class="rail-content">
+          <span class="rail-step-num">Chapter 02</span>
+          <h3 class="rail-heading">Curated <em>Chemistry</em></h3>
+          <p class="rail-desc">
+            Four players matched with surgical symmetry. No mismatched pace, no broken rallies — just four focused minds locked in competitive grace.
+          </p>
+          <div class="rail-specs-bar">
+            <span class="rail-spec-pill">Dynamic 4-Way Match</span>
+            <span class="rail-spec-pill">Zero Friction Onboarding</span>
+            <span class="rail-spec-pill">Global Handicap Standard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rail Panel 3 -->
+      <div class="rail-panel">
+        <video class="rail-video-bg" autoplay muted loop playsinline preload="metadata">
+          <source src="videos/rallyo-v05-match-found-to-booking-world.mp4" type="video/mp4">
+        </video>
+        <div class="rail-overlay"></div>
+        <div class="rail-content">
+          <span class="rail-step-num">Chapter 03</span>
+          <h3 class="rail-heading">Architectural <em>Enclaves</em></h3>
+          <p class="rail-desc">
+            Direct integration with the world's most distinguished padel clubs. Locked in with a single touch, secured before the ball rebounds from the back glass.
+          </p>
+          <div class="rail-specs-bar">
+            <span class="rail-spec-pill">Automated Light Access</span>
+            <span class="rail-spec-pill">Panoramic Rooftops</span>
+            <span class="rail-spec-pill">Priority Club Escrow</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rail Panel 4 -->
+      <div class="rail-panel">
+        <video class="rail-video-bg" autoplay muted loop playsinline preload="metadata">
+          <source src="videos/rallyo-v06-booking-world-to-app-experience.mp4" type="video/mp4">
+        </video>
+        <div class="rail-overlay"></div>
+        <div class="rail-content">
+          <span class="rail-step-num">Chapter 04</span>
+          <h3 class="rail-heading">Digital <em>Elegance</em></h3>
+          <p class="rail-desc">
+            A bespoke digital atelier tailored for the relentless player. Follow your evolution from social evening rallies to championship silverware.
+          </p>
+          <div class="rail-specs-bar">
+            <span class="rail-spec-pill">Passport Credential</span>
+            <span class="rail-spec-pill">Club Operator Portal</span>
+            <span class="rail-spec-pill">Tactile Haptics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       4. PARALLAX STATEMENT (THE RALLYO MANIFESTO)
+       Background: images/rallyo-07-app-takes-shape.jpeg (yPercent: 20)
+  ============================================================== -->
+  <section class="parallax-section" id="parallax-statement">
+    <div class="parallax-bg-wrapper" id="parallax-target">
+      <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Rallyo Statement Background" class="parallax-bg-img">
+    </div>
+    <div class="parallax-overlay"></div>
+    <div class="parallax-content">
+      <span class="statement-tag">THE RALLYO MANIFESTO</span>
+      <h2 class="statement-title">
+        "Padel is not merely played. It is <span>lived</span>, curated, and <span>elevated</span>."
+      </h2>
+      <div class="statement-sub">The Definitive Digital Arena for Modern Padel Couture</div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       5. REVERSE COLUMNS (THE ARCHITECTURAL PILLARS)
+       3-column layout with vertical parallax (col-up / col-down)
+  ============================================================== -->
+  <section class="reverse-columns-section" id="reverse-columns">
+    <div class="reverse-header">
+      <span class="eyebrow">THE ARCHITECTURAL PILLARS</span>
+      <h2>The Anatomy of <span>Prestige</span></h2>
+      <p>Three foundational dimensions of the RALLYO experience</p>
+    </div>
+
+    <div class="columns-container">
+      <!-- Col 1: col-up (yPercent: -20) -->
+      <div class="col-card col-up">
+        <div class="col-media">
+          <img src="images/rallyo-05-match-locks-in.jpeg" alt="The Match Formation">
+          <div class="col-media-overlay"></div>
+        </div>
+        <div class="col-info">
+          <span class="col-badge">01 // SYNERGY</span>
+          <h3 class="col-title">Balanced Doubles</h3>
+          <p class="col-desc">
+            Calculated dynamic matchmaking guarantees every clash at the net is intense, balanced, and memorable.
+          </p>
+          <div class="col-footer-spec">
+            <span>RATING DELTA &lt; 0.15</span>
+            <span>GLOBAL TIER</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: col-down (yPercent: +20) -->
+      <div class="col-card col-down">
+        <div class="col-media">
+          <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="The Booking Network">
+          <div class="col-media-overlay"></div>
+        </div>
+        <div class="col-info">
+          <span class="col-badge">02 // SANCTUARY</span>
+          <h3 class="col-title">Premier Enclaves</h3>
+          <p class="col-desc">
+            Reserved access across world-class private glass arenas, rooftop sky-courts, and elite padel pavilions.
+          </p>
+          <div class="col-footer-spec">
+            <span>INSTANT GATE PASS</span>
+            <span>VERIFIED COURTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: col-up (yPercent: -20) -->
+      <div class="col-card col-up">
+        <div class="col-media">
+          <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="The Player Moment">
+          <div class="col-media-overlay"></div>
+        </div>
+        <div class="col-info">
+          <span class="col-badge">03 // PASSPORT</span>
+          <h3 class="col-title">Player Standing</h3>
+          <p class="col-desc">
+            Your official digital padel credential — showcasing your verified tournament honours, head-to-head records, and court reputation across the world.
+          </p>
+          <div class="col-footer-spec">
+            <span>WORLDWIDE REPUTATION</span>
+            <span>SANCTIONED</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       6. FINAL LOOK GRID (THE TRIUMVIRATE COLLECTION)
+       3 cards: THE APP, THE PLAYER, THE RALLY
+  ============================================================== -->
+  <section class="final-grid-section" id="final-grid">
+    <div class="final-grid-header">
+      <span class="eyebrow">THE TRIUMVIRATE COLLECTION</span>
+      <h2>Three Pillars of the <span>Circuit</span></h2>
+      <p>Engineered for players who demand uncompromised craft</p>
+    </div>
+
+    <div class="tri-grid">
+      <!-- Card 1: THE APP -->
+      <div class="tri-card">
+        <div class="tri-image-box">
+          <span class="tri-serial-tag">№ 01 // INTERFACE</span>
+          <img src="images/rallyo-07-app-takes-shape.jpeg" alt="The App">
+        </div>
+        <div class="tri-content">
+          <div>
+            <span class="tri-card-header">Hardware Meets Software</span>
+            <h3 class="tri-card-name">THE APP</h3>
+            <p class="tri-card-desc">
+              Couture engineering meets instant matchmaking. Your matches, stats, club passes, and partners unified in one tactile interface.
+            </p>
+          </div>
+          <a class="tri-cta-link" onclick="openMembershipModal()">Explore Digital Atelier &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 2: THE PLAYER -->
+      <div class="tri-card">
+        <div class="tri-image-box">
+          <span class="tri-serial-tag">№ 02 // ATHLETE</span>
+          <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="The Player">
+        </div>
+        <div class="tri-content">
+          <div>
+            <span class="tri-card-header">Obsession & Grace</span>
+            <h3 class="tri-card-name">THE PLAYER</h3>
+            <p class="tri-card-desc">
+              Elevate your ranking, unlock premier invitationals, and compete with athletes who share your relentless devotion to the court.
+            </p>
+          </div>
+          <a class="tri-cta-link" onclick="openMembershipModal()">Claim Player Passport &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 3: THE RALLY -->
+      <div class="tri-card">
+        <div class="tri-image-box">
+          <span class="tri-serial-tag">№ 03 // CATALYST</span>
+          <img src="images/rallyo-01-court-spark.jpeg" alt="The Rally">
+        </div>
+        <div class="tri-content">
+          <div>
+            <span class="tri-card-header">Pure Momentum</span>
+            <h3 class="tri-card-name">THE RALLY</h3>
+            <p class="tri-card-desc">
+              The electric moment where game meets community. From the first tap of your smartphone to match point on championship glass.
+            </p>
+          </div>
+          <a class="tri-cta-link" onclick="openMembershipModal()">Join Next Rally &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       7. NEWSLETTER SECTION (THE INVITATIONAL SYNDICATE)
+       Full-bleed background with images/rallyo-08-find-your-rally-moment.jpeg
+  ============================================================== -->
+  <section class="newsletter-section" id="newsletter">
+    <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Join the Inner Circle" class="newsletter-bg">
+    <div class="newsletter-overlay"></div>
+    <div class="newsletter-card">
+      <span class="newsletter-tag">THE INVITATIONAL SYNDICATE</span>
+      <h2 class="newsletter-title">Reserve Your Court Standing</h2>
+      <p class="newsletter-subtitle">
+        Receive privileged invitations to sanctioned private tourneys, exclusive court times, and priority access as RALLYO launches in your city.
+      </p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); openMembershipModal();">
+        <input type="email" placeholder="Enter your private email" class="newsletter-input" required>
+        <button type="submit" class="newsletter-btn">REQUEST INVITATION</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       8. FOOTER (HAUTE PADEL ATELIER)
+       Editorial footer with global cities, brand identity, & 4-column directory
+  ============================================================== -->
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-brand-column">
+        <div class="footer-brand">RALLYO</div>
+        <div class="footer-cities-line">MADRID &bull; DUBAI &bull; STOCKHOLM &bull; LONDON &bull; MIAMI &bull; DOHA</div>
+      </div>
+      <div class="footer-links-grid">
+        <div class="footer-nav-col">
+          <span class="footer-col-title">EXPERIENCE</span>
+          <a href="#hero-track" class="footer-link">The Narrative</a>
+          <a href="#explainer" class="footer-link">Sticky Explainer</a>
+          <a href="#rail-wrapper" class="footer-link">Runway Rail</a>
+          <a href="#parallax-statement" class="footer-link">The Manifesto</a>
+        </div>
+        <div class="footer-nav-col">
+          <span class="footer-col-title">ECOSYSTEM</span>
+          <a href="#reverse-columns" class="footer-link">Court Sanctuaries</a>
+          <a href="#reverse-columns" class="footer-link">Doubles Matchmaking</a>
+          <a href="#final-grid" class="footer-link">Club Accreditation</a>
+          <a href="#final-grid" class="footer-link">Player Passports</a>
+        </div>
+        <div class="footer-nav-col">
+          <span class="footer-col-title">MEMBERSHIP</span>
+          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Player Syndicate</a>
+          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Club Operator Portal</a>
+          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">Private Tourneys</a>
+          <a href="javascript:void(0)" onclick="openMembershipModal()" class="footer-link">VIP Concierge</a>
+        </div>
+        <div class="footer-nav-col">
+          <span class="footer-col-title">LEGAL & ARCHIVE</span>
+          <a href="javascript:void(0)" class="footer-link">Privacy Charter</a>
+          <a href="javascript:void(0)" class="footer-link">Terms of Sanction</a>
+          <a href="javascript:void(0)" class="footer-link">Court Ethics</a>
+          <a href="javascript:void(0)" class="footer-link">2026 Archive</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 RALLYO PADEL TECHNOLOGIES INC. ALL RIGHTS RESERVED.</p>
+      <p>FIND YOUR RALLY &bull; HAUTE DIGITAL ATELIER</p>
+    </div>
+  </footer>
+
+  <!-- =============================================================
+       MEMBERSHIP PORTAL & ONBOARDING FLOW MODAL
+  ============================================================== -->
+  <div id="membership-modal" class="membership-modal-overlay">
+    <div class="membership-modal-container">
+      <!-- Modal Close Button -->
+      <button class="modal-close-btn" onclick="closeMembershipModal()" title="Close">&times;</button>
+
+      <!-- VIEW 1: MEMBERSHIP SELECTION (CHOOSE PLAYER OR CLUB OWNER) -->
+      <div id="view-membership-selection" class="membership-view active">
+        <div class="membership-header">
+          <span class="membership-badge">MEMBERSHIP SELECTION</span>
+          <h2 class="membership-title">Choose Your <span>Pathway</span></h2>
+          <p class="membership-tagline">“Find Your Rally.”</p>
+          <p class="membership-sub">
+            Step into the next-generation global padel network. Select your membership tier to begin.
+          </p>
+        </div>
+
+        <div class="membership-cards-grid">
+          <!-- CARD 1: PLAYER -->
+          <div class="membership-card" onclick="selectMembershipRole('player')">
+            <div>
+              <span class="card-role-tag">ATHLETE &bull; COMPETITOR</span>
+              <h3 class="card-title">Player</h3>
+              <p class="card-tagline">Compete, connect, and track your rally legacy.</p>
+              <p class="card-desc">
+                Find doubles partners matching your skill level, book prime glass courts in seconds, calibrate your dynamic ELO rating, and enter sanctioned invitationals.
+              </p>
+              <ul class="card-features-list">
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>AI Chemistry Matchmaking & Lobby</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Instant Court Reservations & Digital QR Pass</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Dynamic ELO Rating & Global Leaderboards</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Multi-Currency Wallet & Community Chat</span>
+                </li>
+              </ul>
+            </div>
+            <button class="card-btn" type="button">
+              <span>CONTINUE AS PLAYER</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <!-- CARD 2: CLUB OWNER -->
+          <div class="membership-card" onclick="selectMembershipRole('club_owner')">
+            <div>
+              <span class="card-role-tag">VENUE &bull; OPERATOR</span>
+              <h3 class="card-title">Club Owner</h3>
+              <p class="card-tagline">Maximize court yield and digitize your club.</p>
+              <p class="card-desc">
+                Publish court schedules, manage dynamic hourly pricing, issue automated turnstile gate passes, and welcome high-affinity padel players to your arena.
+              </p>
+              <ul class="card-features-list">
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Live Slot Grid & Automated Booking Engine</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Dynamic Peak Yield & Multi-Currency Payouts</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Automated QR Gate Scanner Integration</span>
+                </li>
+                <li class="card-feature-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Tournament Hosting & Club Member Management</span>
+                </li>
+              </ul>
+            </div>
+            <button class="card-btn" type="button">
+              <span>REGISTER AS CLUB OWNER</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: PLAYER ONBOARDING & SIGNUP / LOGIN -->
+      <div id="view-player-flow" class="membership-view">
+        <button class="modal-back-btn" onclick="showMembershipSelectionView()">&larr; Back to Membership Selection</button>
+        
+        <div class="membership-header" style="margin-bottom: 2rem;">
+          <span class="membership-badge">PLAYER MEMBERSHIP</span>
+          <h2 class="membership-title">Player <span>Passport</span></h2>
+          <p class="membership-tagline">“Find Your Rally.”</p>
+        </div>
+
+        <div class="auth-box">
+          <div class="auth-mode-switch">
+            <button type="button" class="auth-tab-btn active" id="player-tab-signup" onclick="setAuthMode('player', 'signup')">Sign Up</button>
+            <button type="button" class="auth-tab-btn" id="player-tab-login" onclick="setAuthMode('player', 'login')">Log In</button>
+          </div>
+
+          <!-- Continue with Google Button -->
+          <button type="button" class="google-btn" onclick="simulateGoogleAuth('player')">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span id="player-google-text">Continue with Google</span>
+          </button>
+
+          <div class="auth-divider"><span>or with email & profile details</span></div>
+
+          <div id="player-alert" class="state-banner"></div>
+
+          <form id="player-form" onsubmit="handlePlayerSubmit(event)">
+            <!-- Profile Photo Upload -->
+            <div id="player-photo-section">
+              <label class="form-label" style="margin-bottom: 0.6rem; display: block;">Profile Photo</label>
+              <div class="avatar-upload-row">
+                <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Avatar Preview" id="player-avatar-preview" class="avatar-preview">
+                <div>
+                  <div class="avatar-presets">
+                    <button type="button" class="preset-avatar-btn active" onclick="selectPlayerPresetAvatar('images/rallyo-08-find-your-rally-moment.jpeg', this)">
+                      <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Preset 1">
+                    </button>
+                    <button type="button" class="preset-avatar-btn" onclick="selectPlayerPresetAvatar('images/rallyo-04-players-connect.jpeg', this)">
+                      <img src="images/rallyo-04-players-connect.jpeg" alt="Preset 2">
+                    </button>
+                    <button type="button" class="preset-avatar-btn" onclick="selectPlayerPresetAvatar('images/rallyo-07-app-takes-shape.jpeg', this)">
+                      <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Preset 3">
+                    </button>
+                  </div>
+                  <span style="font-size: 11px; color: var(--text-dim); margin-top: 0.4rem; display: block;">Select preset or upload your photo</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- Full Name (signup only) -->
+              <div class="form-group" id="player-field-fullname">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="player-name" class="form-input" placeholder="e.g. Sofia Al-Mansoor" value="Mateo Fernandez">
+              </div>
+
+              <!-- Location / City (signup only) -->
+              <div class="form-group" id="player-field-location">
+                <label class="form-label">Location / City</label>
+                <select id="player-location" class="form-select">
+                  <option value="Dubai, UAE" selected>Dubai, UAE</option>
+                  <option value="Madrid, Spain">Madrid, Spain</option>
+                  <option value="Stockholm, Sweden">Stockholm, Sweden</option>
+                  <option value="London, UK">London, UK</option>
+                  <option value="Miami, USA">Miami, USA</option>
+                  <option value="Doha, Qatar">Doha, Qatar</option>
+                  <option value="Riyadh, Saudi Arabia">Riyadh, Saudi Arabia</option>
+                </select>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="player-email" class="form-input" placeholder="name@example.com" value="mateo.padel@rallyo.club" required>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="player-password" class="form-input" placeholder="••••••••" value="rallyo2026" required>
+              </div>
+
+              <!-- Skill Level (signup only) -->
+              <div class="form-group full-width" id="player-field-skill">
+                <label class="form-label">Skill Level</label>
+                <div class="form-chips" id="player-skill-chips">
+                  <div class="chip-item" onclick="selectSingleChip(this, 'player-skill')">Beginner (1.0 - 2.5)</div>
+                  <div class="chip-item active" onclick="selectSingleChip(this, 'player-skill')">Intermediate (3.0 - 4.0)</div>
+                  <div class="chip-item" onclick="selectSingleChip(this, 'player-skill')">Advanced (4.5 - 5.5)</div>
+                  <div class="chip-item" onclick="selectSingleChip(this, 'player-skill')">Pro Open (6.0+)</div>
+                </div>
+              </div>
+
+              <!-- Preferred Playing Area (signup only) -->
+              <div class="form-group" id="player-field-area">
+                <label class="form-label">Preferred Playing Area</label>
+                <select id="player-area" class="form-select">
+                  <option value="Indoor Panoramic Glass" selected>Indoor Panoramic Glass</option>
+                  <option value="Outdoor Skycourt">Outdoor Skycourt</option>
+                  <option value="Rooftop Enclosed">Rooftop Enclosed</option>
+                  <option value="Championship Center Court">Championship Center Court</option>
+                </select>
+              </div>
+
+              <!-- Availability (signup only) -->
+              <div class="form-group" id="player-field-availability">
+                <label class="form-label">Availability</label>
+                <div class="form-chips" id="player-avail-chips">
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Evenings</div>
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Weekends</div>
+                  <div class="chip-item" onclick="toggleMultiChip(this)">Mornings</div>
+                </div>
+              </div>
+
+              <!-- Preferred Language -->
+              <div class="form-group" id="player-field-lang">
+                <label class="form-label">Preferred Language</label>
+                <select id="player-lang" class="form-select">
+                  <option value="English" selected>English (Global)</option>
+                  <option value="Spanish">Español</option>
+                  <option value="Arabic">العربية (Arabic)</option>
+                  <option value="French">Français</option>
+                  <option value="German">Deutsch</option>
+                  <option value="Swedish">Svenska</option>
+                </select>
+              </div>
+
+              <!-- Preferred Currency -->
+              <div class="form-group" id="player-field-currency">
+                <label class="form-label">Preferred Currency</label>
+                <select id="player-currency" class="form-select">
+                  <option value="USD" selected>USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="AED">AED (د.إ)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="SAR">SAR (ر.س)</option>
+                  <option value="SEK">SEK (kr)</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="player-submit-btn" class="auth-submit-btn">
+              <span>CREATE PLAYER ACCOUNT & ENTER</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW 3: PLAYER DASHBOARD -->
+      <div id="view-player-dashboard" class="membership-view">
+        <div class="dashboard-wrapper">
+          <div class="dashboard-top-bar">
+            <div class="dash-user-identity">
+              <img src="images/rallyo-08-find-your-rally-moment.jpeg" alt="Player Avatar" id="dash-player-avatar" class="dash-avatar">
+              <div class="dash-user-meta">
+                <h3 id="dash-player-name">Mateo Fernandez</h3>
+                <p id="dash-player-meta-line">Tier 1 Elite &bull; Dubai, UAE &bull; ELO 1420</p>
+              </div>
+            </div>
+            <div class="dash-actions-row">
+              <button class="dash-action-btn" onclick="showMembershipSelectionView()">Switch Role</button>
+              <button class="dash-action-btn" onclick="closeMembershipModal()">Return to Film</button>
+            </div>
+          </div>
+
+          <!-- Key Player Metrics -->
+          <div class="dash-metrics-grid">
+            <div class="dash-metric-card">
+              <span class="metric-label">Dynamic ELO</span>
+              <div class="metric-value">1,420</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Win Rate</span>
+              <div class="metric-value">68%</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Completed Rallies</span>
+              <div class="metric-value">42 Matches</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Wallet Balance</span>
+              <div class="metric-value" id="dash-player-wallet">$340.00</div>
+            </div>
+          </div>
+
+          <!-- Digital QR Gate Pass -->
+          <div class="qr-pass-card">
+            <div>
+              <span class="card-role-tag" style="color: var(--accent);">CONFIRMED COURT PASS</span>
+              <h3 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 0.6rem;">Marina Padel Sanctuary &bull; Court 3</h3>
+              <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 1rem;">
+                Today &bull; 19:30 - 21:00 (90 mins) &bull; Indoor Panoramic Glass
+              </p>
+              <p style="font-size: 12px; color: var(--accent); letter-spacing: 2px;">
+                PASS ID: RLY-DXB-9842 &bull; SCAN AT TURNSTILE GATE
+              </p>
+            </div>
+            <div class="qr-code-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0a0506" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="card-btn" style="flex: 1;" onclick="alert('Searching for matched doubles players in your ELO bracket (1400-1450)...');">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Instant AI Matchmaker</span>
+            </button>
+            <button class="card-btn" style="flex: 1;" onclick="alert('Opening live court booking inventory for Dubai & Abu Dhabi...');">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Book Prime Court</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: CLUB OWNER ONBOARDING & SIGNUP / LOGIN -->
+      <div id="view-club-flow" class="membership-view">
+        <button class="modal-back-btn" onclick="showMembershipSelectionView()">&larr; Back to Membership Selection</button>
+        
+        <div class="membership-header" style="margin-bottom: 2rem;">
+          <span class="membership-badge">CLUB OWNER MEMBERSHIP</span>
+          <h2 class="membership-title">Venue <span>Accreditation</span></h2>
+          <p class="membership-tagline">“Find Your Rally.”</p>
+        </div>
+
+        <div class="auth-box" style="max-width: 780px;">
+          <div class="auth-mode-switch">
+            <button type="button" class="auth-tab-btn active" id="club-tab-signup" onclick="setAuthMode('club', 'signup')">Sign Up</button>
+            <button type="button" class="auth-tab-btn" id="club-tab-login" onclick="setAuthMode('club', 'login')">Log In</button>
+          </div>
+
+          <!-- Continue with Google Button -->
+          <button type="button" class="google-btn" onclick="simulateGoogleAuth('club_owner')">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span id="club-google-text">Continue with Google (Club Owner)</span>
+          </button>
+
+          <div class="auth-divider"><span>or with club credentials</span></div>
+
+          <div id="club-alert" class="state-banner"></div>
+
+          <form id="club-form" onsubmit="handleClubSubmit(event)">
+            <div class="form-grid">
+              <!-- Owner Full Name -->
+              <div class="form-group" id="club-field-ownername">
+                <label class="form-label">Owner Full Name</label>
+                <input type="text" id="club-owner-name" class="form-input" placeholder="e.g. Sebastian Vance" value="Sebastian Vance">
+              </div>
+
+              <!-- Phone Number -->
+              <div class="form-group" id="club-field-phone">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="club-phone" class="form-input" placeholder="+971 50 123 4567" value="+971 50 892 1100">
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="club-email" class="form-input" placeholder="owner@club.com" value="director@marinapadel.club" required>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="club-password" class="form-input" placeholder="••••••••" value="clubowner2026" required>
+              </div>
+
+              <!-- Club Name (signup only) -->
+              <div class="form-group" id="club-field-clubname">
+                <label class="form-label">Club Name</label>
+                <input type="text" id="club-name" class="form-input" placeholder="e.g. Marina Padel Sanctuary" value="Marina Padel Sanctuary">
+              </div>
+
+              <!-- Club Location / City (signup only) -->
+              <div class="form-group" id="club-field-location">
+                <label class="form-label">Club Location / City</label>
+                <select id="club-location" class="form-select">
+                  <option value="Dubai Marina, UAE" selected>Dubai Marina, UAE</option>
+                  <option value="Madrid, Spain">Madrid, Spain</option>
+                  <option value="Stockholm, Sweden">Stockholm, Sweden</option>
+                  <option value="London, UK">London, UK</option>
+                  <option value="Miami, USA">Miami, USA</option>
+                </select>
+              </div>
+
+              <!-- Full Club Address (signup only) -->
+              <div class="form-group full-width" id="club-field-address">
+                <label class="form-label">Full Club Address</label>
+                <input type="text" id="club-address" class="form-input" placeholder="Marina Promenade, Pier 7 Plaza, Dubai" value="Pier 7 Promenade, Marina Boulevard, Dubai">
+              </div>
+
+              <!-- Club Logo & Gallery Upload (signup only) -->
+              <div class="form-group full-width" id="club-field-media">
+                <label class="form-label">Club Logo & Gallery Pictures</label>
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                  <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Club Logo Preview" style="width: 54px; height: 54px; border-radius: 6px; border: 1px solid var(--accent); object-fit: cover;">
+                  <img src="images/rallyo-06-booking-world-emerges.jpeg" alt="Gallery 1" style="width: 54px; height: 54px; border-radius: 6px; border: 1px solid var(--border-subtle); object-fit: cover;">
+                  <img src="images/rallyo-01-court-spark.jpeg" alt="Gallery 2" style="width: 54px; height: 54px; border-radius: 6px; border: 1px solid var(--border-subtle); object-fit: cover;">
+                  <span style="font-size: 11px; color: var(--accent); letter-spacing: 1px;">3 High-Res Media Assets Verified</span>
+                </div>
+              </div>
+
+              <!-- Court Count & Court Types -->
+              <div class="form-group" id="club-field-courts">
+                <label class="form-label">Court Count</label>
+                <input type="number" id="club-court-count" class="form-input" min="1" max="50" value="6">
+              </div>
+
+              <div class="form-group" id="club-field-courttypes">
+                <label class="form-label">Court Types</label>
+                <select id="club-court-types" class="form-select">
+                  <option value="Indoor Panoramic Glass" selected>Indoor Panoramic Glass</option>
+                  <option value="Outdoor Skycourt Glass">Outdoor Skycourt Glass</option>
+                  <option value="Mixed Indoor & Outdoor">Mixed Indoor & Outdoor</option>
+                </select>
+              </div>
+
+              <!-- Opening Hours -->
+              <div class="form-group" id="club-field-hours">
+                <label class="form-label">Opening Hours</label>
+                <input type="text" id="club-hours" class="form-input" placeholder="06:00 AM - 12:00 AM" value="06:00 AM - 12:00 AM">
+              </div>
+
+              <!-- Booking Rates / Prices & Operating Currency -->
+              <div class="form-group" id="club-field-pricing">
+                <label class="form-label">Booking Rate (Hourly)</label>
+                <div style="display: flex; gap: 0.6rem;">
+                  <input type="number" id="club-rate" class="form-input" style="flex: 1;" value="85">
+                  <select id="club-currency" class="form-select" style="width: 110px;">
+                    <option value="USD" selected>USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="AED">AED (د.إ)</option>
+                    <option value="GBP">GBP (£)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Club Facilities Multi-Select -->
+              <div class="form-group full-width" id="club-field-facilities">
+                <label class="form-label">Club Facilities</label>
+                <div class="form-chips" id="club-facilities-chips">
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Panoramic Glass</div>
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Pro Shop</div>
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Luxury Showers</div>
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Valet Parking</div>
+                  <div class="chip-item active" onclick="toggleMultiChip(this)">Cafe & Lounge</div>
+                  <div class="chip-item" onclick="toggleMultiChip(this)">Coaching Academy</div>
+                  <div class="chip-item" onclick="toggleMultiChip(this)">Recovery Spa</div>
+                </div>
+              </div>
+
+              <!-- Contact Details -->
+              <div class="form-group full-width" id="club-field-contact">
+                <label class="form-label">Club Contact / Support Hotline</label>
+                <input type="text" id="club-contact" class="form-input" placeholder="support@marinapadel.club / WhatsApp +971 50 892 1100" value="concierge@marinapadel.club &bull; WhatsApp: +971 50 892 1100">
+              </div>
+            </div>
+
+            <button type="submit" id="club-submit-btn" class="auth-submit-btn">
+              <span>REGISTER CLUB & LAUNCH DASHBOARD</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW 5: CLUB OWNER DASHBOARD -->
+      <div id="view-club-dashboard" class="membership-view">
+        <div class="dashboard-wrapper">
+          <div class="dashboard-top-bar">
+            <div class="dash-user-identity">
+              <img src="images/rallyo-07-app-takes-shape.jpeg" alt="Club Logo" class="dash-avatar" style="border-radius: 8px;">
+              <div class="dash-user-meta">
+                <h3 id="dash-club-title">Marina Padel Sanctuary</h3>
+                <p id="dash-club-meta-line">Verified Club &bull; Dubai Marina &bull; 6 Panoramic Courts</p>
+              </div>
+            </div>
+            <div class="dash-actions-row">
+              <button class="dash-action-btn" onclick="showMembershipSelectionView()">Switch Role</button>
+              <button class="dash-action-btn" onclick="closeMembershipModal()">Return to Film</button>
+            </div>
+          </div>
+
+          <!-- Key Analytics Cards -->
+          <div class="dash-metrics-grid">
+            <div class="dash-metric-card">
+              <span class="metric-label">Today's GMV</span>
+              <div class="metric-value" id="dash-club-gmv">$1,480.00</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Peak Occupancy</span>
+              <div class="metric-value">88%</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Players Booked</span>
+              <div class="metric-value">64 Players</div>
+            </div>
+            <div class="dash-metric-card">
+              <span class="metric-label">Pending Requests</span>
+              <div class="metric-value">3 Priority</div>
+            </div>
+          </div>
+
+          <!-- Live Court Status Grid -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h4 style="font-family: var(--font-display); font-size: 20px;">Live Court Schedule (Current Hour)</h4>
+              <span style="font-size: 11px; color: var(--accent); letter-spacing: 2px;">LIVE TURNOVER &bull; 19:30</span>
+            </div>
+            <div class="court-grid">
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 1 (Panoramic)</span>
+                  <span class="court-status-pill booked">OCCUPIED</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Match: Tier 1 Doubles &bull; Ends in 24m</p>
+              </div>
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 2 (Panoramic)</span>
+                  <span class="court-status-pill booked">OCCUPIED</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Match: Open Invitational &bull; Ends in 40m</p>
+              </div>
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 3 (Center Court)</span>
+                  <span class="court-status-pill booked">OCCUPIED</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Match: Mateo F. vs. Tariq S. &bull; Ends in 50m</p>
+              </div>
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 4 (Panoramic)</span>
+                  <span class="court-status-pill available">OPEN (BOOKABLE)</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Rate: $85/hr &bull; Instant Gate QR active</p>
+              </div>
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 5 (Outdoor Sky)</span>
+                  <span class="court-status-pill available">OPEN (BOOKABLE)</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Rate: $85/hr &bull; Instant Gate QR active</p>
+              </div>
+              <div class="court-slot-card">
+                <div class="court-slot-header">
+                  <span class="court-name">Court 6 (Outdoor Sky)</span>
+                  <span class="court-status-pill booked">RESERVED (20:00)</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Academy Session &bull; Starts in 30m</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="card-btn" style="flex: 1;" onclick="alert('Slot pricing calibrated to dynamic yield +15% for peak evening demand.');">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>Adjust Slot Yield Pricing</span>
+            </button>
+            <button class="card-btn" style="flex: 1;" onclick="alert('Gate turnstiles synchronized. All active QR passes operational.');">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Sync Automated Gate Passes</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       JAVASCRIPT: LENIS, GSAP, CANVAS SEQUENCE & SCROLL LOGIC
+  ============================================================== -->
+  <script>
+    // Register GSAP Plugin
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* -------------------------------------------------------------
+       1. SMOOTH SCROLLING SETUP WITH LENIS
+       lerp: 0.1, autoRaf: false
+       Synced via gsap.ticker.add and lenis.on('scroll', ScrollTrigger.update)
+    -------------------------------------------------------------- */
+    const lenis = new Lenis({
+      lerp: 0.1,
+      autoRaf: false,
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5
+    });
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+    /* -------------------------------------------------------------
+       2. RIGHT-EDGE ROSE GOLD PROGRESS BAR (HEIGHT 0 TO 100VH)
+    -------------------------------------------------------------- */
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? (scrollY / maxScroll) : 0;
+      progressBar.style.height = `${progress * 100}vh`;
+    }, { passive: true });
+
+    /* -------------------------------------------------------------
+       3. HERO SECTION CANVAS IMAGE SEQUENCE (373 FRAMES)
+       Rule: Name canvas frames 'frames' (NOT global 'images')
+       Draw to canvas on scroll using getBoundingClientRect for progress calculation
+    -------------------------------------------------------------- */
+    const TOTAL_HERO_FRAMES = 373;
+    const frames = [];
+    let framesLoadedCount = 0;
+    const heroTrack = document.getElementById('hero-track');
+    const heroCanvas = document.getElementById('hero-canvas');
+    const heroCtx = heroCanvas.getContext('2d');
+    const scrollHint = document.getElementById('scroll-hint');
+
+    // Text Overlay Elements
+    const overlayPhase1 = document.getElementById('overlay-phase-1');
+    const overlayPhase2 = document.getElementById('overlay-phase-2');
+    const overlayPhase3 = document.getElementById('overlay-phase-3');
+    const overlayPhase4 = document.getElementById('overlay-phase-4');
+    const overlayPhase5 = document.getElementById('overlay-phase-5');
+
+    // Resize canvas with devicePixelRatio for razor-sharp rendering
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      heroCanvas.width = window.innerWidth * dpr;
+      heroCanvas.height = window.innerHeight * dpr;
+      heroCtx.scale(dpr, dpr);
+      renderHeroFrame(getHeroProgress());
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Preload image frames
+    for (let i = 1; i <= TOTAL_HERO_FRAMES; i++) {
+      const img = new Image();
+      const paddedIndex = String(i).padStart(4, '0');
+      img.src = `frames/frame_${paddedIndex}.jpg`;
+      img.onload = () => {
+        framesLoadedCount++;
+        if (framesLoadedCount === 1) {
+          // Render initial frame immediately as soon as frame 1 arrives
+          resizeCanvas();
+        }
+      };
+      frames.push(img);
+    }
+
+    // Calculate Hero scroll progress using getBoundingClientRect
+    function getHeroProgress() {
+      if (!heroTrack) return 0;
+      const rect = heroTrack.getBoundingClientRect();
+      const scrollDistance = rect.height - window.innerHeight;
+      if (scrollDistance <= 0) return 0;
+      const progress = -rect.top / scrollDistance;
+      return Math.min(Math.max(progress, 0), 1);
+    }
+
+    // Draw frame to canvas cover-style
+    function drawCoverImage(img) {
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const screenAspect = w / h;
+
+      let drawW, drawH, drawX, drawY;
+
+      if (screenAspect > imgAspect) {
+        drawW = w;
+        drawH = w / imgAspect;
+        drawX = 0;
+        drawY = (h - drawH) / 2;
+      } else {
+        drawH = h;
+        drawW = h * imgAspect;
+        drawX = (w - drawW) / 2;
+        drawY = 0;
+      }
+
+      heroCtx.clearRect(0, 0, w, h);
+      heroCtx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+
+    // Render frame and update text overlays
+    function renderHeroFrame(progress) {
+      const frameIndex = Math.min(Math.floor(progress * (TOTAL_HERO_FRAMES - 1)), TOTAL_HERO_FRAMES - 1);
+      
+      // Look for the targeted frame or closest loaded frame
+      let targetImg = frames[frameIndex];
+      if (!targetImg || !targetImg.complete) {
+        for (let offset = 1; offset < 20; offset++) {
+          if (frames[frameIndex - offset] && frames[frameIndex - offset].complete) {
+            targetImg = frames[frameIndex - offset];
+            break;
+          }
+          if (frames[frameIndex + offset] && frames[frameIndex + offset].complete) {
+            targetImg = frames[frameIndex + offset];
+            break;
+          }
+        }
+      }
+
+      if (targetImg && targetImg.complete) {
+        drawCoverImage(targetImg);
+      }
+
+      // Hide scroll hint once user starts scrolling
+      if (progress > 0.02) {
+        scrollHint.style.opacity = '0';
+      } else {
+        scrollHint.style.opacity = '0.8';
+      }
+
+      /* -----------------------------------------------------------
+         Text Overlay Visibility Ranges:
+         - 0.05-0.15: RALLYO (110px Fraunces italic centered)
+         - 0.20-0.30: Find Your Rally. (26px Inter light italic centered)
+         - 0.40-0.50: Players become matches. (60px Fraunces centered)
+         - 0.60-0.70: Matches become momentum. (60px Fraunces centered)
+         - 0.80-0.90: One app. Every rally. (12px Inter uppercase top 10% left 8%)
+      ------------------------------------------------------------ */
+      updateOverlayWindow(overlayPhase1, progress, 0.05, 0.15);
+      updateOverlayWindow(overlayPhase2, progress, 0.20, 0.30);
+      updateOverlayWindow(overlayPhase3, progress, 0.40, 0.50);
+      updateOverlayWindow(overlayPhase4, progress, 0.60, 0.70);
+      updateOverlayWindow(overlayPhase5, progress, 0.80, 0.90);
+    }
+
+    function updateOverlayWindow(elem, progress, start, end) {
+      if (!elem) return;
+      if (progress >= start && progress <= end) {
+        const range = end - start;
+        const local = (progress - start) / range;
+        let opacity = 1;
+        // Fade in first 25% of window
+        if (local < 0.25) {
+          opacity = local / 0.25;
+        }
+        // Fade out last 25% of window
+        else if (local > 0.75) {
+          opacity = (1 - local) / 0.25;
+        }
+        elem.style.opacity = opacity.toFixed(3);
+        elem.style.transform = elem.id === 'overlay-phase-5' ? 'translateY(0)' : 'translate(-50%, -50%) translateY(0)';
+      } else {
+        elem.style.opacity = '0';
+        elem.style.transform = elem.id === 'overlay-phase-5' ? 'translateY(12px)' : 'translate(-50%, -50%) translateY(12px)';
+      }
+    }
+
+    // Scroll listener for hero rendering
+    window.addEventListener('scroll', () => {
+      renderHeroFrame(getHeroProgress());
+    }, { passive: true });
+
+    /* -------------------------------------------------------------
+       4. SECTION 2: STICKY BLOOM/RALLY EXPLAINER (INTERSECTION OBSERVER)
+       Rule: Name panel images 'panelImages'
+       Swap left 50% image as right 100vh panels scroll through:
+       0: rallyo-01-court-spark.jpeg
+       1: rallyo-05-match-locks-in.jpeg
+       2: rallyo-06-booking-world-emerges.jpeg
+       3: rallyo-07-app-takes-shape.jpeg
+    -------------------------------------------------------------- */
+    const panelImages = [
+      document.getElementById('explainer-img-0'),
+      document.getElementById('explainer-img-1'),
+      document.getElementById('explainer-img-2'),
+      document.getElementById('explainer-img-3')
+    ];
+
+    const explainerPanels = document.querySelectorAll('.explainer-panel');
+    const phaseHud = document.getElementById('explainer-phase-hud');
+    const phaseLabels = [
+      'PHASE 01 : THE RALLY',
+      'PHASE 02 : THE MATCH',
+      'PHASE 03 : THE BOOKING',
+      'PHASE 04 : THE APP'
+    ];
+
+    const panelObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.getAttribute('data-panel-index'), 10);
+          panelImages.forEach((img, i) => {
+            if (i === index) {
+              img.classList.add('active');
+            } else {
+              img.classList.remove('active');
+            }
+          });
+          if (phaseHud && phaseLabels[index]) {
+            phaseHud.textContent = phaseLabels[index];
+          }
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.5
+    });
+
+    explainerPanels.forEach(panel => panelObserver.observe(panel));
+
+    /* -------------------------------------------------------------
+       5. SECTION 3: HORIZONTAL CRAFTSMANSHIP RAIL (GSAP PINNED)
+       4 panels, smooth horizontal scroll, no black gaps
+    -------------------------------------------------------------- */
+    const railTrack = document.getElementById('rail-track');
+    const railWrapper = document.getElementById('rail-wrapper');
+
+    if (railTrack && railWrapper) {
+      gsap.to(railTrack, {
+        x: () => -(railTrack.scrollWidth - window.innerWidth),
+        ease: "none",
+        scrollTrigger: {
+          trigger: railWrapper,
+          start: "top top",
+          end: () => "+=" + (railTrack.scrollWidth - window.innerWidth),
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true
+        }
+      });
+    }
+
+    /* -------------------------------------------------------------
+       6. SECTION 4: PARALLAX STATEMENT (yPercent: 20) + TEXT REVEAL
+    -------------------------------------------------------------- */
+    const parallaxTarget = document.getElementById('parallax-target');
+    const parallaxSection = document.getElementById('parallax-statement');
+
+    if (parallaxTarget && parallaxSection) {
+      gsap.to(parallaxTarget, {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: parallaxSection,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+
+      gsap.fromTo("#parallax-statement .statement-title", 
+        { opacity: 0.15, y: 40, scale: 0.97 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: parallaxSection,
+            start: "top 80%",
+            end: "center 45%",
+            scrub: 1.2
+          }
+        }
+      );
+    }
+
+    /* -------------------------------------------------------------
+       7. SECTION 5: REVERSE COLUMNS VERTICAL PARALLAX
+       col-up (yPercent: -20), col-down (yPercent: +20)
+    -------------------------------------------------------------- */
+    const reverseColumnsSection = document.getElementById('reverse-columns');
+    const colUps = document.querySelectorAll('.col-up');
+    const colDowns = document.querySelectorAll('.col-down');
+
+    if (reverseColumnsSection) {
+      colUps.forEach(col => {
+        gsap.to(col, {
+          yPercent: -20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: reverseColumnsSection,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+
+      colDowns.forEach(col => {
+        gsap.to(col, {
+          yPercent: 20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: reverseColumnsSection,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+    }
+
+    /* -------------------------------------------------------------
+       7B. SECTIONS 6 & 7: SUBTLE SCROLL REVEALS
+    -------------------------------------------------------------- */
+    if (document.getElementById('final-grid')) {
+      gsap.from(".tri-card", {
+        scrollTrigger: {
+          trigger: "#final-grid",
+          start: "top 85%",
+          once: true
+        },
+        opacity: 0,
+        y: 35,
+        duration: 0.8,
+        stagger: 0.16,
+        ease: "power2.out"
+      });
+    }
+
+    if (document.getElementById('newsletter')) {
+      gsap.from(".newsletter-card", {
+        scrollTrigger: {
+          trigger: "#newsletter",
+          start: "top 85%",
+          once: true
+        },
+        opacity: 0,
+        y: 40,
+        duration: 0.9,
+        ease: "power3.out"
+      });
+    }
+
+    /* -------------------------------------------------------------
+       8. INITIALIZE & REFRESH SCROLLTRIGGER
+       Rule: End the script with ScrollTrigger.refresh()
+    -------------------------------------------------------------- */
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      ScrollTrigger.refresh();
+    });
+
+    /* -------------------------------------------------------------
+       9. MEMBERSHIP SELECTION & ONBOARDING CONTROLLERS
+    -------------------------------------------------------------- */
+    const membershipModal = document.getElementById('membership-modal');
+    const viewSelection = document.getElementById('view-membership-selection');
+    const viewPlayerFlow = document.getElementById('view-player-flow');
+    const viewPlayerDash = document.getElementById('view-player-dashboard');
+    const viewClubFlow = document.getElementById('view-club-flow');
+    const viewClubDash = document.getElementById('view-club-dashboard');
+
+    function switchMembershipView(targetView) {
+      const allViews = [viewSelection, viewPlayerFlow, viewPlayerDash, viewClubFlow, viewClubDash];
+      allViews.forEach(v => {
+        if (v) v.classList.remove('active');
+      });
+      if (targetView) {
+        targetView.classList.add('active');
+      }
+    }
+
+    function openMembershipModal() {
+      window.location.href = 'membership.html';
+    }
+
+    function closeMembershipModal() {
+      if (!membershipModal) return;
+      membershipModal.classList.remove('active');
+      setTimeout(() => {
+        membershipModal.style.display = 'none';
+      }, 350);
+    }
+
+    // Close on escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && membershipModal && membershipModal.classList.contains('active')) {
+        closeMembershipModal();
+      }
+    });
+
+    function showMembershipSelectionView() {
+      switchMembershipView(viewSelection);
+    }
+
+    function selectMembershipRole(role) {
+      if (role === 'player') {
+        setAuthMode('player', 'signup');
+        switchMembershipView(viewPlayerFlow);
+      } else if (role === 'club_owner') {
+        setAuthMode('club', 'signup');
+        switchMembershipView(viewClubFlow);
+      }
+    }
+
+    // Tab switcher between Signup and Login
+    function setAuthMode(roleType, mode) {
+      if (roleType === 'player') {
+        const tabSignup = document.getElementById('player-tab-signup');
+        const tabLogin = document.getElementById('player-tab-login');
+        const btnSubmit = document.getElementById('player-submit-btn');
+        const googleText = document.getElementById('player-google-text');
+        const photoSection = document.getElementById('player-photo-section');
+        const nameField = document.getElementById('player-field-fullname');
+        const locField = document.getElementById('player-field-location');
+        const skillField = document.getElementById('player-field-skill');
+        const areaField = document.getElementById('player-field-area');
+        const availField = document.getElementById('player-field-availability');
+        const langField = document.getElementById('player-field-lang');
+        const currField = document.getElementById('player-field-currency');
+
+        if (mode === 'signup') {
+          tabSignup.classList.add('active');
+          tabLogin.classList.remove('active');
+          btnSubmit.innerHTML = `<span>CREATE PLAYER ACCOUNT & ENTER</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+          googleText.textContent = 'Sign up with Google';
+          if (photoSection) photoSection.style.display = 'block';
+          if (nameField) nameField.style.display = 'flex';
+          if (locField) locField.style.display = 'flex';
+          if (skillField) skillField.style.display = 'flex';
+          if (areaField) areaField.style.display = 'flex';
+          if (availField) availField.style.display = 'flex';
+          if (langField) langField.style.display = 'flex';
+          if (currField) currField.style.display = 'flex';
+        } else {
+          tabSignup.classList.remove('active');
+          tabLogin.classList.add('active');
+          btnSubmit.innerHTML = `<span>SIGN IN TO PLAYER ACCOUNT</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+          googleText.textContent = 'Sign in with Google';
+          if (photoSection) photoSection.style.display = 'none';
+          if (nameField) nameField.style.display = 'none';
+          if (locField) locField.style.display = 'none';
+          if (skillField) skillField.style.display = 'none';
+          if (areaField) areaField.style.display = 'none';
+          if (availField) availField.style.display = 'none';
+          if (langField) langField.style.display = 'none';
+          if (currField) currField.style.display = 'none';
+        }
+      } else if (roleType === 'club') {
+        const tabSignup = document.getElementById('club-tab-signup');
+        const tabLogin = document.getElementById('club-tab-login');
+        const btnSubmit = document.getElementById('club-submit-btn');
+        const googleText = document.getElementById('club-google-text');
+        const ownerField = document.getElementById('club-field-ownername');
+        const phoneField = document.getElementById('club-field-phone');
+        const clubNameField = document.getElementById('club-field-clubname');
+        const locField = document.getElementById('club-field-location');
+        const addrField = document.getElementById('club-field-address');
+        const mediaField = document.getElementById('club-field-media');
+        const courtsField = document.getElementById('club-field-courts');
+        const typesField = document.getElementById('club-field-courttypes');
+        const hoursField = document.getElementById('club-field-hours');
+        const pricingField = document.getElementById('club-field-pricing');
+        const facField = document.getElementById('club-field-facilities');
+        const contactField = document.getElementById('club-field-contact');
+
+        if (mode === 'signup') {
+          tabSignup.classList.add('active');
+          tabLogin.classList.remove('active');
+          btnSubmit.innerHTML = `<span>REGISTER CLUB & LAUNCH DASHBOARD</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+          googleText.textContent = 'Register with Google (Club Owner)';
+          [ownerField, phoneField, clubNameField, locField, addrField, mediaField, courtsField, typesField, hoursField, pricingField, facField, contactField].forEach(el => {
+            if (el) el.style.display = el.classList.contains('full-width') ? 'flex' : 'flex';
+          });
+        } else {
+          tabSignup.classList.remove('active');
+          tabLogin.classList.add('active');
+          btnSubmit.innerHTML = `<span>SIGN IN AS CLUB OWNER</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+          googleText.textContent = 'Sign in with Google (Club Owner)';
+          [ownerField, phoneField, clubNameField, locField, addrField, mediaField, courtsField, typesField, hoursField, pricingField, facField, contactField].forEach(el => {
+            if (el) el.style.display = 'none';
+          });
+        }
+      }
+    }
+
+    // Avatar Selection
+    let selectedPlayerAvatar = 'images/rallyo-08-find-your-rally-moment.jpeg';
+    function selectPlayerPresetAvatar(src, btn) {
+      selectedPlayerAvatar = src;
+      const preview = document.getElementById('player-avatar-preview');
+      if (preview) preview.src = src;
+      document.querySelectorAll('.preset-avatar-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    // Chip helpers
+    function selectSingleChip(elem, group) {
+      const parent = elem.parentElement;
+      parent.querySelectorAll('.chip-item').forEach(c => c.classList.remove('active'));
+      elem.classList.add('active');
+    }
+
+    function toggleMultiChip(elem) {
+      elem.classList.toggle('active');
+    }
+
+    // Google Authentication Simulation
+    function simulateGoogleAuth(role) {
+      const alertBox = role === 'player' ? document.getElementById('player-alert') : document.getElementById('club-alert');
+      const submitBtn = role === 'player' ? document.getElementById('player-submit-btn') : document.getElementById('club-submit-btn');
+
+      if (alertBox) {
+        alertBox.className = 'state-banner success';
+        alertBox.innerHTML = `<span class="spinner"></span> Connecting Google Account (dilnawaz@rallyo.club)...`;
+        alertBox.style.display = 'flex';
+      }
+
+      setTimeout(() => {
+        if (alertBox) {
+          alertBox.innerHTML = `&check; Authenticated via Google! Loading your dashboard...`;
+        }
+        setTimeout(() => {
+          if (alertBox) alertBox.style.display = 'none';
+          if (role === 'player') {
+            launchPlayerDashboard('Dilnawaz Khan', 'Dubai, UAE', selectedPlayerAvatar, 'USD');
+          } else {
+            launchClubDashboard('Marina Padel Sanctuary', 'Dubai Marina', 'USD');
+          }
+        }, 800);
+      }, 1000);
+    }
+
+    // Player Submit Handler
+    function handlePlayerSubmit(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('player-alert');
+      const submitBtn = document.getElementById('player-submit-btn');
+      const nameInput = document.getElementById('player-name');
+      const emailInput = document.getElementById('player-email');
+      const locSelect = document.getElementById('player-location');
+      const currSelect = document.getElementById('player-currency');
+
+      const isSignup = document.getElementById('player-tab-signup').classList.contains('active');
+
+      if (!emailInput.value.includes('@')) {
+        alertBox.className = 'state-banner error';
+        alertBox.textContent = 'Please enter a valid email address.';
+        alertBox.style.display = 'flex';
+        return;
+      }
+
+      // Show Loading State
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner"></span><span>SYNCHRONIZING COURT NETWORK...</span>`;
+      alertBox.style.display = 'none';
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        const name = isSignup ? (nameInput.value.trim() || 'Mateo Fernandez') : 'Mateo Fernandez';
+        const location = isSignup ? (locSelect.value || 'Dubai, UAE') : 'Dubai, UAE';
+        const currency = isSignup ? currSelect.value : 'USD';
+        
+        launchPlayerDashboard(name, location, selectedPlayerAvatar, currency);
+      }, 1200);
+    }
+
+    function launchPlayerDashboard(name, location, avatarSrc, currency) {
+      const nameEl = document.getElementById('dash-player-name');
+      const metaEl = document.getElementById('dash-player-meta-line');
+      const avatarEl = document.getElementById('dash-player-avatar');
+      const walletEl = document.getElementById('dash-player-wallet');
+
+      if (nameEl) nameEl.textContent = name;
+      if (metaEl) metaEl.textContent = `Tier 1 Elite • ${location} • ELO 1420`;
+      if (avatarEl) avatarEl.src = avatarSrc;
+      if (walletEl) walletEl.textContent = currency === 'AED' ? 'AED 1,250' : (currency === 'EUR' ? '€320.00' : '$340.00');
+
+      switchMembershipView(viewPlayerDash);
+    }
+
+    // Club Owner Submit Handler
+    function handleClubSubmit(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('club-alert');
+      const submitBtn = document.getElementById('club-submit-btn');
+      const clubNameInput = document.getElementById('club-name');
+      const locSelect = document.getElementById('club-location');
+      const currSelect = document.getElementById('club-currency');
+
+      const isSignup = document.getElementById('club-tab-signup').classList.contains('active');
+
+      // Show Loading State
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner"></span><span>CONNECTING CLUB INVENTORY ENGINE...</span>`;
+      alertBox.style.display = 'none';
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        const clubName = isSignup ? (clubNameInput.value.trim() || 'Marina Padel Sanctuary') : 'Marina Padel Sanctuary';
+        const location = isSignup ? (locSelect.value || 'Dubai Marina, UAE') : 'Dubai Marina, UAE';
+        const currency = isSignup ? currSelect.value : 'USD';
+
+        launchClubDashboard(clubName, location, currency);
+      }, 1300);
+    }
+
+    function launchClubDashboard(clubName, location, currency) {
+      const titleEl = document.getElementById('dash-club-title');
+      const metaEl = document.getElementById('dash-club-meta-line');
+      const gmvEl = document.getElementById('dash-club-gmv');
+
+      if (titleEl) titleEl.textContent = clubName;
+      if (metaEl) metaEl.textContent = `Verified Partner • ${location} • 6 Panoramic Courts`;
+      if (gmvEl) gmvEl.textContent = currency === 'AED' ? 'AED 5,430.00' : (currency === 'EUR' ? '€1,390.00' : '$1,480.00');
+
+      switchMembershipView(viewClubDash);
+    }
+
+    ScrollTrigger.refresh();
+  </script>
+</body>
+</html>
